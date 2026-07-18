@@ -127,7 +127,7 @@ update products
 如果你想用命令行，以后可以用这套。先在 GitHub 上创建空仓库，然后把仓库地址替换到下面命令里。
 
 ```powershell
-cd /d F:\pinshang-shop
+Set-Location F:\pinshang-shop
 git init
 git branch -M main
 git add .
@@ -139,10 +139,18 @@ git push -u origin main
 后续每次更新：
 
 ```powershell
-cd /d F:\pinshang-shop
+Set-Location F:\pinshang-shop
 git add .
 git commit -m "update products"
 git push
+```
+
+当前这台电脑上的 `F:\pinshang-shop` 已经完成了 `git init` 和第一次提交。如果你接着用命令行部署，只需要在 GitHub 创建空仓库后执行：
+
+```powershell
+Set-Location F:\pinshang-shop
+git remote add origin https://github.com/你的用户名/pinshang-shop.git
+git push -u origin main
 ```
 
 如果 `git commit` 提示没有配置用户名邮箱，执行：
