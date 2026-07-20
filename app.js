@@ -56,6 +56,7 @@
       ".phone-list a",
       ".mobile-actions a",
       ".mobile-actions button",
+      ".showcase-card",
       ".product-gallery__thumbs button"
     ].join(","));
 
@@ -157,6 +158,24 @@
     resultCount.textContent = `${products.length} 项`;
     grid.hidden = products.length === 0;
     emptyState.hidden = products.length !== 0;
+  }
+
+  function renderHeroShowcase() {
+    const showcase = document.getElementById("heroShowcase");
+    if (!showcase) return;
+
+    const products = data.products.slice(0, 3);
+    if (!products.length) return;
+
+    showcase.innerHTML = products.map((product, index) => `
+      <button class="showcase-card ${index === 0 ? "showcase-card--large" : ""}" type="button" data-product="${escapeHtml(product.id)}" aria-label="查看${escapeHtml(product.name)}详情">
+        <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}">
+        <div>
+          <strong>${escapeHtml(product.name)}</strong>
+          <span>${escapeHtml(product.priceNote || product.category)}</span>
+        </div>
+      </button>
+    `).join("");
   }
 
   function renderCases() {
@@ -425,6 +444,7 @@
   });
 
   renderTabs();
+  renderHeroShowcase();
   renderProducts();
   renderCases();
   renderWechatContact();
