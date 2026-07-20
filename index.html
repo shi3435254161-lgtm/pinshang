@@ -115,6 +115,35 @@
       </div>
     </section>
 
+    <section class="section team-section" aria-labelledby="team-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">谁来接待与上门</p>
+          <h2 id="team-title">先有人对接，再安排师傅</h2>
+        </div>
+      </div>
+      <div class="team-grid">
+        <article class="team-card">
+          <span class="team-card__badge">业务对接</span>
+          <h3>产品、价格和预约先找业务微信</h3>
+          <p>买烟机灶具、卫浴、热水器或想问套餐价格，先把产品、村镇和需求发给业务微信。忙的时候也能先收信息，后面再统一确认价格和上门安排。</p>
+          <button class="button button--primary" type="button" data-open-contact>
+            <img src="assets/icons/message-circle.svg" alt="">
+            发需求给业务
+          </button>
+        </article>
+        <article class="team-card team-card--installer">
+          <span class="team-card__badge">安装师傅</span>
+          <h3>水电管道、厨卫安装和急修直接打师傅</h3>
+          <p>漏水、换件、跑线跑管、烟机灶具和厨卫安装这类现场活，急用时直接电话说明位置和情况。能不能上门、怎么施工，师傅按现场确认。</p>
+          <a class="button button--secondary" href="tel:13781449660">
+            <img src="assets/icons/phone.svg" alt="">
+            直接打师傅
+          </a>
+        </article>
+      </div>
+    </section>
+
     <section class="catalog-tools" aria-label="产品筛选">
       <label class="search-box">
         <img src="assets/icons/search.svg" alt="">
@@ -176,7 +205,7 @@
       <div>
         <p class="eyebrow">到店与上门</p>
         <h2 id="contact-title">急用打师傅，买产品找业务微信</h2>
-        <p>你妈忙时不耽误客户：急修急装直接电话找安装师傅；产品价格、型号和套餐可先加业务微信；不着急的留下村镇和需求。</p>
+        <p>业务对接人忙时也不耽误客户：急修急装直接电话找安装师傅；产品价格、型号和套餐可先加业务微信；不着急的留下村镇和需求。</p>
       </div>
       <div class="contact-band__actions">
         <a class="button button--secondary" href="tel:13781449660">
@@ -284,8 +313,9 @@
           <p id="wechatHelp">微信内长按二维码可识别添加；如果填写了微信号，也可以一键复制后到微信搜索。</p>
           <div class="wechat-actions" id="wechatActions" hidden>
             <span id="wechatIdText"></span>
-            <button class="button button--quiet" type="button" data-copy-wechat>复制微信号</button>
-            <a class="button button--quiet" id="wechatLinkButton" href="#" rel="noopener" hidden>打开微信咨询</a>
+            <button class="button button--quiet" id="copyWechatButton" type="button" data-copy-wechat>复制微信号</button>
+            <a class="button button--quiet" id="qrImageButton" target="_blank" rel="noopener" hidden>打开二维码大图</a>
+            <a class="button button--quiet" id="wechatLinkButton" rel="noopener" hidden>打开微信咨询</a>
           </div>
         </div>
       </div>
@@ -304,6 +334,8 @@
       </form>
     </div>
   </dialog>
+
+  <div class="site-toast" id="siteToast" role="status" aria-live="polite" hidden></div>
 
   <script src="data.js"></script>
   <script src="app.js"></script>

@@ -17,11 +17,15 @@
   const wechatPanel = document.getElementById("wechatPanel");
   const wechatActions = document.getElementById("wechatActions");
   const wechatIdText = document.getElementById("wechatIdText");
+  const copyWechatAction = document.getElementById("copyWechatButton");
+  const qrImageButton = document.getElementById("qrImageButton");
   const wechatLinkButton = document.getElementById("wechatLinkButton");
   const wechatHelp = document.getElementById("wechatHelp");
   const copyOpenWechatLabel = document.getElementById("copyOpenWechatLabel");
+  const siteToast = document.getElementById("siteToast");
   let selectedCategory = "全部";
   let activeProduct = null;
+  let toastTimer = 0;
 
   const escapeHtml = (value) => String(value).replace(/[&<>"]/g, (character) => ({
     "&": "&amp;",
@@ -45,6 +49,18 @@
     void copyStatus.offsetWidth;
     copyStatus.classList.add("copy-status--active");
     copyStatus.classList.toggle("copy-status--error", Boolean(isError));
+    if (!siteToast) return;
+    window.clearTimeout(toastTimer);
+    siteToast.textContent = message;
+    siteToast.hidden = false;
+    siteToast.classList.remove("site-toast--active", "site-toast--error");
+    void siteToast.offsetWidth;
+    siteToast.classList.add("site-toast--active");
+    siteToast.classList.toggle("site-toast--error", Boolean(isError));
+    toastTimer = window.setTimeout(() => {
+      siteToast.hidden = true;
+      siteToast.classList.remove("site-toast--active", "site-toast--error");
+    }, 2600);
   }
 
   function createTapRipple(event) {
@@ -79,7 +95,11 @@
   }
 
   function renderTabs() {
-    tabs.innerHTML = data.categories.map((category) => `
+    const usedCategories = new Set((data.products || []).map((product) => product.category).filter(Boolean));
+    const categories = [...new Set(["全部", ...(data.categories || [])])]
+      .filter((category) => category === "全部" || usedCategories.has(category));
+    if (!categories.includes(selectedCategory)) selectedCategory = "全部";
+    tabs.innerHTML = categories.map((category) => `
       <button type="button" role="tab" aria-selected="${category === selectedCategory}" data-category="${escapeHtml(category)}">
         ${escapeHtml(category)}
       </button>
@@ -138,7 +158,7 @@
     if (qrPlaceholder && qrImage) {
       qrPlaceholder.classList.add("qr-placeholder--image");
       qrPlaceholder.setAttribute("aria-label", "业务微信二维码，微信内长按识别");
-      qrPlaceholder.innerHTML = `<img src="${escapeHtml(qrImage)}" alt="业务微信二维码">`;
+      qrPlaceholder.innerHTML = `<a class="qr-image-link" href="${escapeHtml(qrImage)}" target="_blank" rel="noopener" aria-label="打开业务微信二维码大图"><img src="${escapeHtml(qrImage)}" alt="业务微信二维码"></a>`;
     } else if (qrPlaceholder) {
       qrPlaceholder.classList.remove("qr-placeholder--image");
       qrPlaceholder.setAttribute("aria-label", "业务微信二维码待补充");
@@ -146,23 +166,36 @@
     }
 
     if (wechatActions) {
-      wechatActions.hidden = !(wechatId || wechatLink);
+      wechatActions.hidden = !(qrImage || wechatId || wechatLink);
     }
 
-    if (wechatIdText && wechatId) {
-      wechatIdText.textContent = `微信号：${wechatId}`;
+    if (wechatIdText) {
+      wechatIdText.textContent = wechatId ? `微信号：${wechatId}` : "";
+    }
+
+    if (copyWechatAction) {
+      copyWechatAction.hidden = !wechatId;
+    }
+
+    if (qrImageButton) {
+      qrImageButton.hidden = !qrImage;
+      if (qrImage) qrImageButton.href = qrImage;
+      else qrImageButton.removeAttribute("href");
     }
 
     if (wechatLinkButton && wechatLink) {
       wechatLinkButton.href = wechatLink;
       wechatLinkButton.hidden = false;
+    } else if (wechatLinkButton) {
+      wechatLinkButton.hidden = true;
+      wechatLinkButton.removeAttribute("href");
     }
 
     if (wechatHelp) {
       if (qrImage && wechatId) {
-        wechatHelp.textContent = "可长按二维码识别添加，也可复制微信号到微信搜索；添加后粘贴询价内容发送。";
+        wechatHelp.textContent = "先点开二维码大图再长按识别，或复制微信号到微信搜索；添加后粘贴询价内容发送。";
       } else if (qrImage) {
-        wechatHelp.textContent = "可长按二维码识别添加；添加后粘贴询价内容发送。";
+        wechatHelp.textContent = "先点开二维码大图，再长按图片选择识别二维码；添加后粘贴询价内容发送。";
       } else if (wechatId) {
         wechatHelp.textContent = "可复制微信号到微信搜索添加；添加后粘贴询价内容发送。";
       } else {
@@ -353,7 +386,7 @@
     if (!product) return;
     activeProduct = product;
     productDialogContent.innerHTML = productDetail(product);
-    productDialog.showModal();
+    openDialog(productDialog);
     document.title = `${product.name}｜${data.store.name}`;
     if (updateHistory) {
       const url = new URL(window.location.href);
@@ -363,7 +396,13 @@
   }
 
   function closeDialog(dialog) {
-    if (dialog.open) dialog.close();
+    if (dialog && dialog.open) dialog.close();
+  }
+
+  function openDialog(dialog) {
+    if (!dialog || dialog.open) return;
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else dialog.setAttribute("open", "");
   }
 
   function openContact(product) {
@@ -373,7 +412,7 @@
     inquiryNeed.value = "";
     clearCopyStatus();
     closeDialog(productDialog);
-    contactDialog.showModal();
+    openDialog(contactDialog);
   }
 
   function buildInquiryText() {
@@ -423,7 +462,7 @@
         window.setTimeout(openWechatApp, 220);
       } else if (qrImage) {
         highlightWechatContact();
-        showCopyStatus("咨询内容已复制。请长按业务微信二维码，选择识别图中二维码添加；添加后粘贴发送。");
+        showCopyStatus("咨询内容已复制。请点开二维码大图后长按识别添加；添加后粘贴发送。");
       } else if (wechatId) {
         highlightWechatContact();
         showCopyStatus("咨询内容已复制。请先复制上方微信号，到微信搜索添加；添加后粘贴发送。");
@@ -491,7 +530,12 @@
       const wechatId = (data.store.wechatId || "").trim();
       if (wechatId) {
         copyText(wechatId).then(() => {
-          showCopyStatus("微信号已复制，请到微信搜索添加。");
+          const oldLabel = copyWechatButton.textContent;
+          copyWechatButton.textContent = "已复制微信号";
+          window.setTimeout(() => {
+            copyWechatButton.textContent = oldLabel;
+          }, 1400);
+          showCopyStatus("微信号已复制，请到微信搜索添加业务微信。");
         }).catch(() => {
           showCopyStatus("复制失败，请手动输入微信号。", true);
         });
@@ -521,7 +565,7 @@
     event.preventDefault();
     try {
       await copyText(buildInquiryText());
-      showCopyStatus("预约信息已复制，请打开微信粘贴发送给店主。");
+      showCopyStatus("预约信息已复制，请添加业务微信后粘贴发送；急用可直接打师傅电话。");
     } catch (error) {
       showCopyStatus("复制失败，请直接拨打上方电话。", true);
     }

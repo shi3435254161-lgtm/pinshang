@@ -653,6 +653,62 @@ h3 {
   font-size: 13px;
 }
 
+.team-section {
+  padding-top: 26px;
+  padding-bottom: 18px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.team-card {
+  display: grid;
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid rgba(11, 122, 90, 0.18);
+  border-radius: 8px;
+  gap: 12px;
+  background: #ffffff;
+  box-shadow: 0 10px 28px rgba(18, 24, 38, 0.06);
+}
+
+.team-card--installer {
+  border-color: rgba(232, 93, 42, 0.22);
+  background: linear-gradient(145deg, #ffffff, var(--accent-soft));
+}
+
+.team-card__badge {
+  width: fit-content;
+  padding: 5px 9px;
+  border-radius: 999px;
+  color: var(--primary-dark);
+  background: var(--surface-strong);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.team-card--installer .team-card__badge {
+  color: var(--accent);
+  background: #fff7f2;
+}
+
+.team-card h3 {
+  margin-bottom: 0;
+  font-size: 21px;
+}
+
+.team-card p {
+  margin-bottom: 4px;
+  color: var(--muted);
+}
+
+.team-card .button {
+  width: fit-content;
+}
+
 .catalog-tools {
   display: grid;
   padding: 24px 20px 8px;
@@ -1616,6 +1672,12 @@ dialog::backdrop {
   object-position: center;
 }
 
+.qr-image-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .inquiry-form {
   display: grid;
   padding-top: 20px;
@@ -1708,6 +1770,33 @@ dialog::backdrop {
   animation: tap-ripple 620ms var(--ease-out) forwards;
 }
 
+.site-toast {
+  position: fixed;
+  right: 16px;
+  bottom: calc(86px + env(safe-area-inset-bottom));
+  left: 16px;
+  z-index: 80;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 12px 14px;
+  border: 1px solid rgba(11, 122, 90, 0.2);
+  border-radius: 8px;
+  color: var(--primary-dark);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  font-size: 14px;
+}
+
+.site-toast--active {
+  animation: status-pop 180ms var(--ease-out);
+}
+
+.site-toast--error {
+  color: var(--accent);
+  border-color: rgba(232, 93, 42, 0.24);
+}
+
 @media (min-width: 900px) {
   body {
     padding-bottom: 0;
@@ -1735,6 +1824,10 @@ dialog::backdrop {
 
   .site-footer {
     padding-bottom: 44px;
+  }
+
+  .site-toast {
+    bottom: 24px;
   }
 }
 
@@ -1790,6 +1883,18 @@ dialog::backdrop {
   .scenario-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
+  }
+
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .team-card {
+    padding: 18px;
+  }
+
+  .team-card .button {
+    width: 100%;
   }
 
   .scenario-card {
