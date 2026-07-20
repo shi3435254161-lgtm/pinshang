@@ -1,6 +1,6 @@
 /*
  * 店铺内容集中维护文件。
- * 建议优先使用本地商品管理助手修改，手动修改时注意逗号和引号。
+ * 可使用电脑商品助手或手机上货后台维护。
  */
 window.SHOP_DATA = {
   "store": {
@@ -20,7 +20,8 @@ window.SHOP_DATA = {
     "烟机灶具",
     "卫浴",
     "水电管道",
-    "烟机"
+    "烟机",
+    "火影忍者"
   ],
   "products": [
     {
@@ -561,6 +562,47 @@ window.SHOP_DATA = {
         ]
       ],
       "notice": "未确认的信息不要夸大，建议以实物和现场确认为准。"
+    },
+    {
+      "id": "product-mrtl6v3a",
+      "category": "火影忍者",
+      "name": "野生小南",
+      "brand": "小南",
+      "model": "",
+      "price": "99999",
+      "priceNote": "价格以到店或微信确认为准",
+      "image": "assets/products/product-1784573828206-1.jpg",
+      "description": "",
+      "tags": [
+        "可咨询"
+      ],
+      "aliases": [],
+      "gallery": [
+        "assets/products/product-1784573828206-1.jpg"
+      ],
+      "sellingPoints": [],
+      "specs": [],
+      "buyingGuide": [
+        "购买前建议先发现场照片。"
+      ],
+      "installCheck": [
+        "说明所在村镇，确认是否在服务范围内。"
+      ],
+      "included": [
+        "基础安装内容请先咨询确认。"
+      ],
+      "extras": [
+        "拆旧",
+        "额外配件",
+        "特殊施工"
+      ],
+      "faqs": [
+        [
+          "村里能上门吗？",
+          "宁陵县及周边乡村可咨询，较远村镇请提前确认。"
+        ]
+      ],
+      "notice": "具体价格、配置和安装条件以咨询确认结果为准。"
     }
   ],
   "cases": []
