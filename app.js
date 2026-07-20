@@ -122,6 +122,7 @@
 
     if (wechatPanel) {
       wechatPanel.hidden = !hasWechatContact;
+      wechatPanel.classList.toggle("wechat-panel--has-qr", Boolean(qrImage));
     }
 
     if (copyOpenWechatLabel) {

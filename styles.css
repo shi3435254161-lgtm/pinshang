@@ -442,7 +442,10 @@ h3 {
   width: 100%;
   height: 100%;
   min-height: 156px;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+  padding: 8px;
+  background: var(--white);
 }
 
 .showcase-card--large img {
@@ -811,6 +814,7 @@ h3 {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: center;
   padding: 10px;
   transition: transform 180ms ease;
 }
@@ -1155,6 +1159,8 @@ dialog::backdrop {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: center;
+  padding: 8px;
 }
 
 .product-gallery__thumbs {
@@ -1191,7 +1197,10 @@ dialog::backdrop {
 .product-gallery__thumbs img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+  padding: 4px;
+  background: var(--white);
 }
 
 .product-detail__main {
@@ -1531,6 +1540,11 @@ dialog::backdrop {
   transition: background-color 180ms var(--ease-out), box-shadow 180ms var(--ease-out);
 }
 
+.wechat-panel--has-qr {
+  grid-template-columns: minmax(156px, 220px) minmax(0, 1fr);
+  align-items: start;
+}
+
 .wechat-panel--attention {
   background: #f0faf6;
   box-shadow: inset 4px 0 0 var(--primary);
@@ -1586,9 +1600,12 @@ dialog::backdrop {
 }
 
 .qr-placeholder--image {
+  width: min(220px, 100%);
+  height: auto;
   padding: 0;
   overflow: hidden;
   border-style: solid;
+  aspect-ratio: 1 / 1;
   background: var(--white);
 }
 
@@ -1596,6 +1613,7 @@ dialog::backdrop {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: center;
 }
 
 .inquiry-form {
@@ -1852,6 +1870,14 @@ dialog::backdrop {
     grid-template-columns: 1fr;
   }
 
+  .wechat-panel--has-qr {
+    grid-template-columns: 1fr;
+  }
+
+  .qr-placeholder--image {
+    width: min(260px, 100%);
+  }
+
   .contact-paths {
     grid-template-columns: 1fr;
   }
@@ -1909,7 +1935,7 @@ dialog::backdrop {
   }
 
   .product-card__image {
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 1 / 1;
   }
 
   .product-card h3,
