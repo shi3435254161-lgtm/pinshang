@@ -14,10 +14,12 @@
   const inquiryVillage = document.getElementById("inquiryVillage");
   const inquiryNeed = document.getElementById("inquiryNeed");
   const copyStatus = document.getElementById("copyStatus");
+  const wechatPanel = document.getElementById("wechatPanel");
   const wechatActions = document.getElementById("wechatActions");
   const wechatIdText = document.getElementById("wechatIdText");
   const wechatLinkButton = document.getElementById("wechatLinkButton");
   const wechatHelp = document.getElementById("wechatHelp");
+  const copyOpenWechatLabel = document.getElementById("copyOpenWechatLabel");
   let selectedCategory = "全部";
   let activeProduct = null;
 
@@ -56,6 +58,7 @@
       ".product-card__image",
       ".phone-list a",
       ".contact-path",
+      ".scenario-card",
       ".mobile-actions a",
       ".mobile-actions button",
       ".showcase-card",
@@ -100,11 +103,24 @@
     return haystack.includes(query.toLowerCase());
   }
 
+  function isWeChatBrowser() {
+    return /micromessenger/i.test(window.navigator.userAgent);
+  }
+
   function renderWechatContact() {
     const qrPlaceholder = document.getElementById("qrPlaceholder");
     const qrImage = (data.store.wechatQr || "").trim();
     const wechatId = (data.store.wechatId || "").trim();
     const wechatLink = (data.store.wechatLink || "").trim();
+    const hasWechatContact = Boolean(qrImage || wechatId || wechatLink);
+
+    if (wechatPanel) {
+      wechatPanel.hidden = !hasWechatContact;
+    }
+
+    if (copyOpenWechatLabel) {
+      copyOpenWechatLabel.textContent = wechatLink || !isWeChatBrowser() ? "复制咨询内容并打开微信" : "复制咨询内容";
+    }
 
     if (qrPlaceholder && qrImage) {
       qrPlaceholder.classList.add("qr-placeholder--image");
@@ -116,8 +132,8 @@
       qrPlaceholder.innerHTML = `${icon("qr-code")}<span>二维码待补充</span>`;
     }
 
-    if (wechatActions && (wechatId || wechatLink)) {
-      wechatActions.hidden = false;
+    if (wechatActions) {
+      wechatActions.hidden = !(wechatId || wechatLink);
     }
 
     if (wechatIdText && wechatId) {
@@ -137,7 +153,7 @@
       } else if (wechatId) {
         wechatHelp.textContent = "可复制微信号到微信搜索添加；添加后粘贴询价内容发送。";
       } else {
-        wechatHelp.textContent = "业务微信二维码和微信号补充后，客户可扫码或搜索添加；当前也可以先复制询价内容后电话联系。";
+        wechatHelp.textContent = "复制咨询内容后发送给业务微信，店里会按村镇和需求确认价格与上门安排。";
       }
     }
   }
@@ -378,8 +394,16 @@
   async function copyInquiryAndOpenWechat() {
     try {
       await copyText(buildInquiryText());
-      showCopyStatus("预约信息已复制，正在尝试打开微信；打开后粘贴发送给业务微信。");
-      window.setTimeout(openWechatApp, 220);
+      const wechatLink = (data.store.wechatLink || "").trim();
+      if (wechatLink) {
+        showCopyStatus("咨询内容已复制，正在打开业务微信；打开后粘贴发送即可。");
+        window.setTimeout(openWechatApp, 220);
+      } else if (!isWeChatBrowser()) {
+        showCopyStatus("咨询内容已复制，正在尝试打开微信；如果没有跳转，请手动打开微信粘贴发送。");
+        window.setTimeout(openWechatApp, 220);
+      } else {
+        showCopyStatus("咨询内容已复制。请返回微信聊天粘贴发送；急用可直接拨打安装师傅电话。");
+      }
     } catch (error) {
       showCopyStatus("复制失败，请手动复制内容或直接拨打上方电话。", true);
     }

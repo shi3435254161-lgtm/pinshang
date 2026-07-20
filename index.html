@@ -30,11 +30,18 @@
 
   <main id="top">
     <section class="service-intro" aria-labelledby="intro-title">
+      <div class="hero-ambient" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
       <div class="service-intro__inner">
         <div class="hero-copy">
           <p class="eyebrow"><img src="assets/icons/map-pin.svg" alt="">宁陵县及周边乡村</p>
-          <h1 id="intro-title">产品看得明白，安装费用提前说清</h1>
-          <p>本地实体经营，厨卫产品、水电管道、烟机灶具都可以先看参数、看安装说明，再微信或电话确认价格。</p>
+          <h1 id="intro-title">厨卫水电买装一块问，本地师傅上门更省心</h1>
+          <p>烟机灶具、卫浴洁具、水电管道都可以先看产品和安装说明。急修急装直接打师傅，买产品问价格联系业务微信。</p>
           <div class="hero-actions">
             <a class="button button--secondary" href="#products">
               <img src="assets/icons/layout-grid.svg" alt="">
@@ -74,6 +81,37 @@
             </div>
           </article>
         </div>
+      </div>
+    </section>
+
+    <section class="scenario-section" aria-labelledby="scenario-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">按需求找服务</p>
+          <h2 id="scenario-title">你现在遇到哪种情况？</h2>
+        </div>
+      </div>
+      <div class="scenario-grid">
+        <a class="scenario-card scenario-card--urgent" href="tel:13781449660">
+          <span>急</span>
+          <strong>漏水、换件、今天想装</strong>
+          <p>直接电话找安装师傅，先确认能不能上门。</p>
+        </a>
+        <button class="scenario-card" type="button" data-open-contact>
+          <span>买</span>
+          <strong>烟机灶具、卫浴、热水器</strong>
+          <p>先看商品，再咨询型号、价格和安装费用。</p>
+        </button>
+        <button class="scenario-card" type="button" data-open-contact>
+          <span>装</span>
+          <strong>新房、旧房厨卫安装</strong>
+          <p>把村镇和现场情况说清，施工前确认费用。</p>
+        </button>
+        <button class="scenario-card" type="button" data-open-contact>
+          <span>修</span>
+          <strong>水电管道维修</strong>
+          <p>先电话或微信说明位置，必要时师傅上门看。</p>
+        </button>
       </div>
     </section>
 
@@ -191,9 +229,9 @@
       <img src="assets/icons/message-circle.svg" alt="">
       <span>咨询预约</span>
     </button>
-    <a href="tel:15836485998">
+    <a href="tel:13781449660">
       <img src="assets/icons/phone.svg" alt="">
-      <span>打电话</span>
+      <span>打师傅</span>
     </a>
   </nav>
 
@@ -221,7 +259,7 @@
         </a>
         <button class="contact-path" type="button" data-copy-open-wechat>
           <span>买产品 / 问价格</span>
-          <strong>复制需求并打开微信</strong>
+          <strong>复制咨询内容</strong>
           <small>适合烟机灶具、卫浴、热水器</small>
         </button>
         <button class="contact-path" type="button" data-focus-inquiry>
@@ -236,7 +274,7 @@
         <a href="tel:15836485998"><img src="assets/icons/phone.svg" alt=""><span><small>业务咨询 / 产品价格</small>158 3648 5998</span></a>
       </div>
 
-      <div class="wechat-panel" id="wechatPanel">
+      <div class="wechat-panel" id="wechatPanel" hidden>
         <div class="qr-placeholder" id="qrPlaceholder" aria-label="业务微信二维码待上传">
           <img src="assets/icons/qr-code.svg" alt="">
           <span>业务微信二维码待上传</span>
@@ -253,15 +291,15 @@
       </div>
 
       <form class="inquiry-form" id="inquiryForm">
-        <p class="form-intro">预约信息不会自动提交后台。当前方案是帮客户整理成一段文字，复制后发给业务微信，避免沟通漏项。</p>
+        <p class="form-intro">把村镇和需求写清楚，点复制后发给业务微信；急用请直接拨打安装师傅电话。</p>
         <label>意向产品<input id="inquiryProduct" name="product" type="text" readonly></label>
         <label>所在村镇<input id="inquiryVillage" name="village" type="text" placeholder="例如：宁陵县XX乡XX村"></label>
         <label>需求说明<textarea id="inquiryNeed" name="need" rows="3" placeholder="例如：旧热水器更换，需要拆旧"></textarea></label>
         <div class="inquiry-actions">
-          <button class="button button--primary" type="button" data-copy-open-wechat><img src="assets/icons/message-circle.svg" alt="">复制预约信息并打开微信</button>
+          <button class="button button--primary" type="button" data-copy-open-wechat><img src="assets/icons/message-circle.svg" alt=""><span id="copyOpenWechatLabel">复制咨询内容</span></button>
           <button class="button button--secondary" type="submit"><img src="assets/icons/copy.svg" alt="">只复制预约信息</button>
         </div>
-        <p class="contact-method-note">如果微信没有自动跳转，请手动打开微信，把已复制内容粘贴发送；急用可直接打安装师傅电话。</p>
+        <p class="contact-method-note">个人微信不能从网页直接跳到某个好友聊天；复制后发送给业务微信即可，急用可直接打安装师傅电话。</p>
         <p class="copy-status" id="copyStatus" role="status" aria-live="polite"></p>
       </form>
     </div>
