@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#176b52">
+  <title>手机上货｜联塑管道 · 品尚装饰</title>
+  <link rel="stylesheet" href="mobile-admin.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="back-button" id="backButton" type="button" hidden aria-label="返回商品列表">&#8592;</button>
+    <div class="topbar__title">
+      <span>联塑管道 · 品尚装饰</span>
+      <strong id="pageTitle">手机上货</strong>
+    </div>
+    <button class="text-button" id="settingsButton" type="button" hidden>设置</button>
+  </header>
+
+  <main>
+    <section class="setup" id="setupView">
+      <div class="setup__mark">店主专用</div>
+      <h1>第一次由家人帮忙连接</h1>
+      <p>连接成功后，这台手机会记住管理钥匙。以后上货只需要拍照、填写商品信息，再点发布。</p>
+
+      <form class="setup-form" id="setupForm">
+        <label for="tokenInput">管理员密钥</label>
+        <div class="secret-field">
+          <input id="tokenInput" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="粘贴 GitHub fine-grained token">
+          <button id="toggleTokenButton" type="button">显示</button>
+        </div>
+        <button class="primary-button primary-button--large" id="connectButton" type="submit">连接商品库</button>
+      </form>
+
+      <div class="message" id="setupMessage" role="status" aria-live="polite"></div>
+
+      <details class="setup-help">
+        <summary>给孩子看的首次配置方法</summary>
+        <ol>
+          <li>登录店铺所用的 GitHub 账号，创建 fine-grained token。</li>
+          <li>仓库只选 <code>pinshang</code>，权限只开 <code>Contents: Read and write</code>。</li>
+          <li>把生成的密钥粘贴到上面并连接。不要把密钥发给别人或写进源码。</li>
+        </ol>
+        <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noreferrer">打开 GitHub 密钥设置</a>
+      </details>
+    </section>
+
+    <section class="catalog" id="catalogView" hidden>
+      <div class="catalog-actions">
+        <label class="search-box">
+          <span class="sr-only">搜索商品</span>
+          <input id="searchInput" type="search" placeholder="搜索商品名、品牌或型号">
+        </label>
+        <button class="primary-button" id="addButton" type="button">+ 新增商品</button>
+      </div>
+
+      <div class="sync-line">
+        <span id="accountLabel">已连接</span>
+        <button class="link-button" id="reloadButton" type="button">刷新商品</button>
+      </div>
+
+      <div class="product-list" id="productList"></div>
+      <div class="empty-state" id="emptyState" hidden>没有找到商品</div>
+    </section>
+
+    <section class="editor" id="editorView" hidden>
+      <form id="productForm">
+        <section class="form-section form-section--photos">
+          <div class="section-heading">
+            <div>
+              <h2>商品照片</h2>
+              <p>第一张会作为商品主图，最多 6 张</p>
+            </div>
+            <label class="upload-button">
+              拍照 / 选图
+              <input id="photoInput" type="file" accept="image/*" multiple>
+            </label>
+          </div>
+          <div class="photo-list" id="photoList"></div>
+        </section>
+
+        <section class="form-section">
+          <h2>基本信息</h2>
+          <div class="field-grid">
+            <label class="field field--wide">商品名称<span>*</span>
+              <input id="nameInput" type="text" required placeholder="例如：美的 60L 电热水器">
+            </label>
+            <label class="field">分类<span>*</span>
+              <input id="categoryInput" type="text" list="categoryOptions" required placeholder="选择或输入分类">
+            </label>
+            <label class="field">价格
+              <input id="priceInput" type="text" inputmode="decimal" placeholder="例如：899元">
+            </label>
+            <label class="field">品牌
+              <input id="brandInput" type="text" placeholder="例如：美的">
+            </label>
+            <label class="field">型号
+              <input id="modelInput" type="text" placeholder="照包装填写">
+            </label>
+            <label class="field field--wide">一句话介绍
+              <textarea id="descriptionInput" rows="3" placeholder="这款商品适合什么家庭、有什么特点"></textarea>
+            </label>
+            <label class="field field--wide">价格说明
+              <input id="priceNoteInput" type="text" placeholder="例如：价格以到店或微信确认为准">
+            </label>
+          </div>
+        </section>
+
+        <details class="form-section advanced-section">
+          <summary>
+            <span><strong>详细介绍与参数</strong><small>有资料时再填，不填也能发布</small></span>
+            <span>展开</span>
+          </summary>
+          <div class="advanced-fields">
+            <label class="field">商品卖点 <small>一行写一个</small>
+              <textarea id="sellingPointsInput" rows="5" placeholder="大风量，适合经常爆炒&#10;支持手势控制"></textarea>
+            </label>
+            <label class="field">规格参数 <small>一行一个，格式：参数=内容</small>
+              <textarea id="specsInput" rows="6" placeholder="容量=60L&#10;额定功率=2200W"></textarea>
+            </label>
+            <label class="field">购买前说明 <small>一行写一个</small>
+              <textarea id="buyingGuideInput" rows="4"></textarea>
+            </label>
+            <label class="field">安装前确认 <small>一行写一个</small>
+              <textarea id="installCheckInput" rows="4"></textarea>
+            </label>
+            <label class="field">基础安装包含 <small>一行写一个</small>
+              <textarea id="includedInput" rows="4"></textarea>
+            </label>
+            <label class="field">可能另外收费 <small>一行写一个</small>
+              <textarea id="extrasInput" rows="4"></textarea>
+            </label>
+            <label class="field">常见问题 <small>一行一个，格式：问题=回答</small>
+              <textarea id="faqsInput" rows="5"></textarea>
+            </label>
+            <label class="field">注意事项
+              <textarea id="noticeInput" rows="3"></textarea>
+            </label>
+          </div>
+        </details>
+
+        <div class="danger-zone" id="dangerZone">
+          <button class="danger-button" id="deleteButton" type="button">删除这个商品</button>
+        </div>
+
+        <div class="publish-bar">
+          <div class="publish-message" id="publishMessage" role="status" aria-live="polite"></div>
+          <button class="primary-button primary-button--publish" id="publishButton" type="submit">发布到网站</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="settings" id="settingsView" hidden>
+      <h1>管理设置</h1>
+      <div class="settings-row">
+        <span>商品仓库</span>
+        <strong>shi3435254161-lgtm / pinshang</strong>
+      </div>
+      <div class="settings-row">
+        <span>当前账号</span>
+        <strong id="settingsAccount">-</strong>
+      </div>
+      <a class="secondary-button" href="https://shop.reverser9n6h12.me/" target="_blank" rel="noreferrer">查看客户网站</a>
+      <button class="danger-button danger-button--block" id="disconnectButton" type="button">清除这台手机的管理权限</button>
+      <p class="settings-note">管理密钥只保存在当前浏览器。清除浏览器数据、换手机或密钥到期后，需要重新连接。</p>
+    </section>
+  </main>
+
+  <datalist id="categoryOptions"></datalist>
+  <script src="mobile-admin.js"></script>
+</body>
+</html>

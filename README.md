@@ -22,6 +22,8 @@
 
 日常上货建议优先使用本地商品管理助手，双击 `start-admin.bat` 打开。它可以用表单维护商品、上传商品图、保存 `data.js` 并生成上传文件夹。
 
+如果只有手机，可以打开 `https://shop.reverser9n6h12.me/mobile-admin.html`。第一次由懂电脑的家人配置一个仅限 `pinshang` 仓库、只有 Contents 读写权限的 GitHub fine-grained token；配置完成后，手机端可直接新增、修改、拍照上传和发布商品。管理密钥只保存在那台手机的浏览器里，不能写进源码、聊天记录或公开页面。
+
 所有产品资料最终都会集中保存到 `data.js`。每个产品包含：
 
 - `name`：对外产品名称
