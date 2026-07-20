@@ -43,7 +43,12 @@
       product.model,
       product.category,
       ...(product.tags || []),
-      ...(product.aliases || [])
+      ...(product.aliases || []),
+      ...(product.sellingPoints || []),
+      ...(product.buyingGuide || []),
+      ...(product.installCheck || []),
+      ...(product.specs || []).flat(),
+      ...(product.faqs || []).flat()
     ].join(" ").toLowerCase();
     return haystack.includes(query.toLowerCase());
   }
@@ -108,6 +113,7 @@
   }
 
   function detailList(title, items, className) {
+    if (!items || !items.length) return "";
     return `
       <section class="detail-list ${className || ""}">
         <h3>${escapeHtml(title)}</h3>
@@ -116,25 +122,101 @@
     `;
   }
 
+  function productGallery(product) {
+    const images = [...new Set([...(product.gallery || []), product.image].filter(Boolean))];
+    const firstImage = images[0] || product.image;
+    const thumbnails = images.length > 1 ? `
+      <div class="product-gallery__thumbs" aria-label="商品图片">
+        ${images.map((image, index) => `
+          <button type="button" data-gallery-image="${escapeHtml(image)}" aria-pressed="${index === 0}" aria-label="查看第 ${index + 1} 张图片">
+            <img src="${escapeHtml(image)}" alt="">
+          </button>
+        `).join("")}
+      </div>
+    ` : "";
+
+    return `
+      <div class="product-gallery">
+        <div class="product-gallery__main">
+          <img class="product-detail__main-image" src="${escapeHtml(firstImage)}" alt="${escapeHtml(product.name)}">
+        </div>
+        ${thumbnails}
+      </div>
+    `;
+  }
+
+  function specTable(specs) {
+    if (!specs || !specs.length) return "";
+    return `
+      <section class="commerce-section spec-section">
+        <h3>规格参数</h3>
+        <dl class="spec-table">
+          ${specs.map(([label, value]) => `
+            <div>
+              <dt>${escapeHtml(label)}</dt>
+              <dd>${escapeHtml(value)}</dd>
+            </div>
+          `).join("")}
+        </dl>
+      </section>
+    `;
+  }
+
+  function commerceSection(title, items, className) {
+    if (!items || !items.length) return "";
+    return `
+      <section class="commerce-section ${className || ""}">
+        <h3>${escapeHtml(title)}</h3>
+        <ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+      </section>
+    `;
+  }
+
+  function faqSection(faqs) {
+    if (!faqs || !faqs.length) return "";
+    return `
+      <section class="commerce-section product-faqs">
+        <h3>常见问题</h3>
+        ${faqs.map(([question, answer]) => `
+          <details>
+            <summary>${escapeHtml(question)}</summary>
+            <p>${escapeHtml(answer)}</p>
+          </details>
+        `).join("")}
+      </section>
+    `;
+  }
+
   function productDetail(product) {
     return `
       <div class="product-detail">
-        <div class="product-detail__media"><img src="${product.image}" alt="${escapeHtml(product.name)}"></div>
-        <div class="product-detail__main">
-          <p class="eyebrow">${escapeHtml(product.category)} · ${escapeHtml(product.brand)}</p>
-          <h2 id="productDialogTitle">${escapeHtml(product.name)}</h2>
-          <p class="detail-model">${escapeHtml(product.model)}</p>
-          <div class="detail-price"><strong>${escapeHtml(product.price)}</strong><span>${escapeHtml(product.priceNote)}</span></div>
-          <p class="detail-description">${escapeHtml(product.description)}</p>
-          <div class="tag-list">${product.tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
-          ${detailList("基础安装包含", product.included, "detail-list--included")}
-          ${detailList("以下情况可能另计费用", product.extras, "detail-list--extras")}
-          <p class="safety-note">${icon("shield-check")}<span>${escapeHtml(product.notice)}</span></p>
-          <div class="detail-actions">
-            <button class="button button--primary" type="button" data-quote="${product.id}">${icon("message-circle")}微信询价</button>
-            <a class="button button--secondary" href="tel:${data.store.phones[0]}">${icon("phone")}电话咨询</a>
-            <button class="icon-button" type="button" data-share-product="${product.id}" aria-label="分享这个产品" title="分享">${icon("share-2")}</button>
+        <div class="product-detail__lead">
+          <div class="product-detail__media">${productGallery(product)}</div>
+          <div class="product-detail__main">
+            <p class="eyebrow">${escapeHtml(product.category)} · ${escapeHtml(product.brand)}</p>
+            <h2 id="productDialogTitle">${escapeHtml(product.name)}</h2>
+            <p class="detail-model">${escapeHtml(product.model)}</p>
+            <div class="detail-price"><strong>${escapeHtml(product.price)}</strong><span>${escapeHtml(product.priceNote)}</span></div>
+            <p class="detail-description">${escapeHtml(product.description)}</p>
+            <div class="tag-list">${(product.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
+            <div class="detail-actions">
+              <button class="button button--primary" type="button" data-quote="${product.id}">${icon("message-circle")}微信询价</button>
+              <a class="button button--secondary" href="tel:${data.store.phones[0]}">${icon("phone")}电话咨询</a>
+              <button class="icon-button" type="button" data-share-product="${product.id}" aria-label="分享这个产品" title="分享">${icon("share-2")}</button>
+            </div>
+            <p class="safety-note">${icon("shield-check")}<span>${escapeHtml(product.notice)}</span></p>
           </div>
+        </div>
+        <div class="product-detail__commerce">
+          ${commerceSection("商品卖点", product.sellingPoints, "commerce-section--points")}
+          ${specTable(product.specs)}
+          ${commerceSection("选购说明", product.buyingGuide)}
+          ${commerceSection("安装前请确认", product.installCheck, "commerce-section--check")}
+          <div class="commerce-grid">
+            ${detailList("基础安装包含", product.included, "detail-list--included")}
+            ${detailList("以下情况可能另计费用", product.extras, "detail-list--extras")}
+          </div>
+          ${faqSection(product.faqs)}
         </div>
       </div>
     `;
@@ -213,6 +295,7 @@
     const categoryButton = event.target.closest("[data-category]");
     const productButton = event.target.closest("[data-product]");
     const quoteButton = event.target.closest("[data-quote]");
+    const galleryButton = event.target.closest("[data-gallery-image]");
     const shareButton = event.target.closest("[data-share-product]");
     const contactButton = event.target.closest("[data-open-contact]");
     const closeButton = event.target.closest("[data-close-dialog]");
@@ -224,6 +307,11 @@
       renderProducts();
     } else if (productButton) {
       showProduct(productButton.dataset.product, true);
+    } else if (galleryButton) {
+      const mainImage = productDialogContent.querySelector(".product-detail__main-image");
+      const thumbButtons = productDialogContent.querySelectorAll("[data-gallery-image]");
+      if (mainImage) mainImage.src = galleryButton.dataset.galleryImage;
+      thumbButtons.forEach((button) => button.setAttribute("aria-pressed", String(button === galleryButton)));
     } else if (quoteButton) {
       const product = data.products.find((item) => item.id === quoteButton.dataset.quote);
       openContact(product);

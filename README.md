@@ -29,8 +29,14 @@
 - `price`：产品价或产品加基础安装价
 - `priceNote`：价格的简短说明
 - `aliases`：客户可能会搜索的俗称，例如“马桶”“煤气灶”
+- `gallery`：商品图册，支持多张图片
+- `sellingPoints`：商品卖点
+- `specs`：规格参数表
+- `buyingGuide`：选购说明
+- `installCheck`：安装前需要客户确认的内容
 - `included`：基础安装默认包含项目
 - `extras`：可能另收费的项目
+- `faqs`：客户常问问题
 - `notice`：选型或施工注意事项
 
 没有得到确认的信息不要猜，继续保留“待确认”或暂时隐藏该产品。
