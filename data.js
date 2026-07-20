@@ -10,8 +10,8 @@ window.SHOP_DATA = {
       "15836485998",
       "13781449660"
     ],
-    "wechatQr": "",
-    "wechatId": "",
+    "wechatQr": "assets/20260720220857_2550_8.jpg",
+    "wechatId": "xt516666688888",
     "wechatLink": ""
   },
   "categories": [
