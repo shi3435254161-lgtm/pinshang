@@ -42,7 +42,7 @@
             </a>
             <button class="button button--primary" type="button" data-open-contact>
               <img src="assets/icons/message-circle.svg" alt="">
-              微信咨询
+              咨询与预约
             </button>
           </div>
           <div class="trust-strip" aria-label="服务特点">
@@ -97,7 +97,7 @@
       <div class="empty-state" id="emptyState" hidden>
         <strong>暂时没有匹配的产品</strong>
         <p>换个关键词，或直接联系店里说明需求。</p>
-        <button class="button button--secondary" type="button" data-open-contact>联系店铺</button>
+        <button class="button button--secondary" type="button" data-open-contact>联系/预约</button>
       </div>
     </section>
 
@@ -137,18 +137,18 @@
     <section class="contact-band" aria-labelledby="contact-title">
       <div>
         <p class="eyebrow">到店与上门</p>
-        <h2 id="contact-title">宁陵县及周边乡村均可咨询</h2>
-        <p>具体是否上门、配送费用和时间，根据村镇距离与订单内容确认。</p>
+        <h2 id="contact-title">急用打师傅，买产品找业务微信</h2>
+        <p>你妈忙时不耽误客户：急修急装直接电话找安装师傅；产品价格、型号和套餐可先加业务微信；不着急的留下村镇和需求。</p>
       </div>
       <div class="contact-band__actions">
-        <a class="button button--secondary" href="tel:15836485998">
-          <img src="assets/icons/phone.svg" alt="">
-          158 3648 5998
-        </a>
         <a class="button button--secondary" href="tel:13781449660">
           <img src="assets/icons/phone.svg" alt="">
-          137 8144 9660
+          急用找师傅
         </a>
+        <button class="button button--primary" type="button" data-open-contact>
+          <img src="assets/icons/message-circle.svg" alt="">
+          产品/预约咨询
+        </button>
       </div>
     </section>
 
@@ -189,7 +189,7 @@
     </a>
     <button type="button" data-open-contact>
       <img src="assets/icons/message-circle.svg" alt="">
-      <span>微信咨询</span>
+      <span>咨询预约</span>
     </button>
     <a href="tel:15836485998">
       <img src="assets/icons/phone.svg" alt="">
@@ -211,11 +211,29 @@
     <div class="contact-dialog__content">
       <p class="eyebrow">咨询与预约</p>
       <h2 id="contactDialogTitle">联系联塑管道 · 品尚装饰</h2>
-      <p class="dialog-lead">个人微信不能稳定从网页直达聊天。建议先复制询价内容，再扫码或搜索业务微信发送；手机会尝试帮你打开微信。</p>
+      <p class="dialog-lead">按情况选路：急修急装直接打安装师傅；买产品、问价格找业务微信；不着急就复制预约信息发给店里，方便后续回电。</p>
+
+      <div class="contact-paths" aria-label="联系分流">
+        <a class="contact-path contact-path--urgent" href="tel:13781449660">
+          <span>急修 / 急装</span>
+          <strong>直接打安装师傅</strong>
+          <small>适合漏水、换件、今天就想装</small>
+        </a>
+        <button class="contact-path" type="button" data-copy-open-wechat>
+          <span>买产品 / 问价格</span>
+          <strong>复制需求并打开微信</strong>
+          <small>适合烟机灶具、卫浴、热水器</small>
+        </button>
+        <button class="contact-path" type="button" data-focus-inquiry>
+          <span>不着急</span>
+          <strong>留下村镇和需求</strong>
+          <small>店里有空后回电确认</small>
+        </button>
+      </div>
 
       <div class="phone-list">
-        <a href="tel:15836485998"><img src="assets/icons/phone.svg" alt=""><span><small>联系电话一</small>158 3648 5998</span></a>
-        <a href="tel:13781449660"><img src="assets/icons/phone.svg" alt=""><span><small>联系电话二</small>137 8144 9660</span></a>
+        <a href="tel:13781449660"><img src="assets/icons/phone.svg" alt=""><span><small>安装师傅 / 急修急装</small>137 8144 9660</span></a>
+        <a href="tel:15836485998"><img src="assets/icons/phone.svg" alt=""><span><small>业务咨询 / 产品价格</small>158 3648 5998</span></a>
       </div>
 
       <div class="wechat-panel" id="wechatPanel">
@@ -235,14 +253,15 @@
       </div>
 
       <form class="inquiry-form" id="inquiryForm">
+        <p class="form-intro">预约信息不会自动提交后台。当前方案是帮客户整理成一段文字，复制后发给业务微信，避免沟通漏项。</p>
         <label>意向产品<input id="inquiryProduct" name="product" type="text" readonly></label>
         <label>所在村镇<input id="inquiryVillage" name="village" type="text" placeholder="例如：宁陵县XX乡XX村"></label>
         <label>需求说明<textarea id="inquiryNeed" name="need" rows="3" placeholder="例如：旧热水器更换，需要拆旧"></textarea></label>
         <div class="inquiry-actions">
-          <button class="button button--primary" type="button" data-copy-open-wechat><img src="assets/icons/message-circle.svg" alt="">复制内容并打开微信</button>
-          <button class="button button--secondary" type="submit"><img src="assets/icons/copy.svg" alt="">只复制询价内容</button>
+          <button class="button button--primary" type="button" data-copy-open-wechat><img src="assets/icons/message-circle.svg" alt="">复制预约信息并打开微信</button>
+          <button class="button button--secondary" type="submit"><img src="assets/icons/copy.svg" alt="">只复制预约信息</button>
         </div>
-        <p class="contact-method-note">打开微信后，把已复制的内容粘贴发给业务微信；如果没有跳转，请手动打开微信。</p>
+        <p class="contact-method-note">如果微信没有自动跳转，请手动打开微信，把已复制内容粘贴发送；急用可直接打安装师傅电话。</p>
         <p class="copy-status" id="copyStatus" role="status" aria-live="polite"></p>
       </form>
     </div>

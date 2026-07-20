@@ -55,6 +55,7 @@
       ".category-tabs button",
       ".product-card__image",
       ".phone-list a",
+      ".contact-path",
       ".mobile-actions a",
       ".mobile-actions button",
       ".showcase-card",
@@ -296,7 +297,7 @@
             <p class="detail-description">${escapeHtml(product.description)}</p>
             <div class="tag-list">${(product.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
             <div class="detail-actions">
-              <button class="button button--primary" type="button" data-quote="${product.id}">${icon("message-circle")}微信咨询</button>
+              <button class="button button--primary" type="button" data-quote="${product.id}">${icon("message-circle")}咨询/预约</button>
               <a class="button button--secondary" href="tel:${data.store.phones[0]}">${icon("phone")}电话咨询</a>
               <button class="icon-button" type="button" data-share-product="${product.id}" aria-label="分享这个产品" title="分享">${icon("share-2")}</button>
             </div>
@@ -349,8 +350,8 @@
   function buildInquiryText() {
     const product = inquiryProduct.value.trim() || "未指定";
     const village = inquiryVillage.value.trim() || "待补充";
-    const need = inquiryNeed.value.trim() || "想了解产品价格、配送和安装费用";
-    return `您好，我在${data.store.name}产品页看到：\n意向产品：${product}\n所在村镇：${village}\n需求说明：${need}\n请帮我确认商品价格、安装包含内容和可能增加的费用。`;
+    const need = inquiryNeed.value.trim() || "想了解产品价格、配送、安装费用和上门时间";
+    return `您好，我在${data.store.name}页面看到信息，想咨询/预约：\n意向产品：${product}\n所在村镇：${village}\n需求说明：${need}\n请帮我确认价格、安装包含内容、可能增加的费用和是否方便上门。`;
   }
 
   async function copyText(text) {
@@ -377,7 +378,7 @@
   async function copyInquiryAndOpenWechat() {
     try {
       await copyText(buildInquiryText());
-      showCopyStatus("询价内容已复制，正在尝试打开微信；打开后粘贴发送给业务微信。");
+      showCopyStatus("预约信息已复制，正在尝试打开微信；打开后粘贴发送给业务微信。");
       window.setTimeout(openWechatApp, 220);
     } catch (error) {
       showCopyStatus("复制失败，请手动复制内容或直接拨打上方电话。", true);
@@ -410,6 +411,7 @@
     const shareButton = event.target.closest("[data-share-product]");
     const copyWechatButton = event.target.closest("[data-copy-wechat]");
     const copyOpenWechatButton = event.target.closest("[data-copy-open-wechat]");
+    const focusInquiryButton = event.target.closest("[data-focus-inquiry]");
     const contactButton = event.target.closest("[data-open-contact]");
     const closeButton = event.target.closest("[data-close-dialog]");
 
@@ -432,6 +434,9 @@
       shareProduct(shareButton.dataset.shareProduct);
     } else if (copyOpenWechatButton) {
       copyInquiryAndOpenWechat();
+    } else if (focusInquiryButton) {
+      inquiryVillage.scrollIntoView({ behavior: "smooth", block: "center" });
+      inquiryVillage.focus();
     } else if (copyWechatButton) {
       const wechatId = (data.store.wechatId || "").trim();
       if (wechatId) {
@@ -466,7 +471,7 @@
     event.preventDefault();
     try {
       await copyText(buildInquiryText());
-      showCopyStatus("询价内容已复制，请打开微信粘贴发送给店主。");
+      showCopyStatus("预约信息已复制，请打开微信粘贴发送给店主。");
     } catch (error) {
       showCopyStatus("复制失败，请直接拨打上方电话。", true);
     }
