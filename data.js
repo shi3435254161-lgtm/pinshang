@@ -562,45 +562,6 @@ window.SHOP_DATA = {
         ]
       ],
       "notice": "未确认的信息不要夸大，建议以实物和现场确认为准。"
-    },
-    {
-      "id": "aaa",
-      "category": "热水器",
-      "name": "aaa",
-      "brand": "",
-      "model": "",
-      "price": "价格待确认",
-      "priceNote": "价格以到店或微信确认为准",
-      "image": "",
-      "description": "",
-      "tags": [
-        "可咨询"
-      ],
-      "aliases": [],
-      "gallery": [],
-      "sellingPoints": [],
-      "specs": [],
-      "buyingGuide": [
-        "购买前建议先发现场照片。"
-      ],
-      "installCheck": [
-        "说明所在村镇，确认是否在服务范围内。"
-      ],
-      "included": [
-        "基础安装内容请先咨询确认。"
-      ],
-      "extras": [
-        "拆旧",
-        "额外配件",
-        "特殊施工"
-      ],
-      "faqs": [
-        [
-          "村里能上门吗？",
-          "宁陵县及周边乡村可咨询，较远村镇请提前确认。"
-        ]
-      ],
-      "notice": "具体价格、配置和安装条件以咨询确认结果为准。"
     }
   ],
   "cases": []
