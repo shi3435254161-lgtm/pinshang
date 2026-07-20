@@ -31,6 +31,47 @@
     return `<img src="assets/icons/${name}.svg" alt="">`;
   }
 
+  function clearCopyStatus() {
+    copyStatus.textContent = "";
+    copyStatus.classList.remove("copy-status--active", "copy-status--error");
+  }
+
+  function showCopyStatus(message, isError) {
+    copyStatus.textContent = message;
+    copyStatus.classList.remove("copy-status--active", "copy-status--error");
+    void copyStatus.offsetWidth;
+    copyStatus.classList.add("copy-status--active");
+    copyStatus.classList.toggle("copy-status--error", Boolean(isError));
+  }
+
+  function createTapRipple(event) {
+    if (event.button && event.button !== 0) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const target = event.target.closest([
+      ".button",
+      ".icon-button",
+      ".category-tabs button",
+      ".product-card__image",
+      ".phone-list a",
+      ".mobile-actions a",
+      ".mobile-actions button",
+      ".product-gallery__thumbs button"
+    ].join(","));
+
+    if (!target || target.disabled) return;
+
+    const rect = target.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 1.7;
+    const ripple = document.createElement("span");
+    ripple.className = "tap-ripple";
+    ripple.style.setProperty("--tap-x", `${event.clientX - rect.left}px`);
+    ripple.style.setProperty("--tap-y", `${event.clientY - rect.top}px`);
+    ripple.style.setProperty("--tap-size", `${size}px`);
+    target.appendChild(ripple);
+    ripple.addEventListener("animationend", () => ripple.remove(), { once: true });
+  }
+
   function renderTabs() {
     tabs.innerHTML = data.categories.map((category) => `
       <button type="button" role="tab" aria-selected="${category === selectedCategory}" data-category="${escapeHtml(category)}">
@@ -264,7 +305,7 @@
     inquiryProduct.value = activeProduct ? activeProduct.name : "暂未指定，先说明需求";
     inquiryVillage.value = "";
     inquiryNeed.value = "";
-    copyStatus.textContent = "";
+    clearCopyStatus();
     closeDialog(productDialog);
     contactDialog.showModal();
   }
@@ -341,9 +382,9 @@
       const wechatId = (data.store.wechatId || "").trim();
       if (wechatId) {
         copyText(wechatId).then(() => {
-          copyStatus.textContent = "微信号已复制，请到微信搜索添加。";
+          showCopyStatus("微信号已复制，请到微信搜索添加。");
         }).catch(() => {
-          copyStatus.textContent = "复制失败，请手动输入微信号。";
+          showCopyStatus("复制失败，请手动输入微信号。", true);
         });
       }
     } else if (contactButton) {
@@ -352,6 +393,8 @@
       closeDialog(closeButton.closest("dialog"));
     }
   });
+
+  document.addEventListener("pointerdown", createTapRipple);
 
   [productDialog, contactDialog].forEach((dialog) => {
     dialog.addEventListener("click", (event) => {
@@ -369,9 +412,9 @@
     event.preventDefault();
     try {
       await copyText(buildInquiryText());
-      copyStatus.textContent = "询价内容已复制，请返回微信发送给店主。";
+      showCopyStatus("询价内容已复制，请返回微信发送给店主。");
     } catch (error) {
-      copyStatus.textContent = "复制失败，请直接拨打上方电话。";
+      showCopyStatus("复制失败，请直接拨打上方电话。", true);
     }
   });
 

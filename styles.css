@@ -11,6 +11,8 @@
   --accent-soft: #fff0ec;
   --blue: #236c91;
   --shadow: 0 12px 30px rgba(23, 33, 30, 0.12);
+  --shadow-lift: 0 16px 36px rgba(23, 33, 30, 0.16);
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   color-scheme: light;
   font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
   font-size: 16px;
@@ -89,6 +91,64 @@ h3 {
   transform: translateY(0);
 }
 
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tap-ripple {
+  from {
+    opacity: 0.32;
+    transform: translate(-50%, -50%) scale(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes status-pop {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .site-header {
   position: sticky;
   top: 0;
@@ -141,6 +201,7 @@ h3 {
 }
 
 .icon-button {
+  position: relative;
   display: inline-grid;
   flex: 0 0 44px;
   width: 44px;
@@ -151,11 +212,19 @@ h3 {
   border-radius: 6px;
   background: var(--white);
   cursor: pointer;
+  overflow: hidden;
+  transition: background 160ms var(--ease-out), border-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out), transform 160ms var(--ease-out);
 }
 
 .icon-button:hover {
   border-color: var(--primary);
   background: var(--surface);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(23, 33, 30, 0.1);
+}
+
+.icon-button:active {
+  transform: translateY(0) scale(0.97);
 }
 
 .icon-button img,
@@ -211,6 +280,7 @@ h3 {
 }
 
 .button {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -223,6 +293,17 @@ h3 {
   line-height: 1.25;
   text-align: center;
   cursor: pointer;
+  overflow: hidden;
+  transition: background 160ms var(--ease-out), border-color 160ms var(--ease-out), color 160ms var(--ease-out), box-shadow 160ms var(--ease-out), transform 160ms var(--ease-out);
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(23, 33, 30, 0.1);
+}
+
+.button:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .button--primary {
@@ -312,6 +393,7 @@ h3 {
 }
 
 .category-tabs button {
+  position: relative;
   flex: 0 0 auto;
   min-height: 38px;
   padding: 7px 14px;
@@ -319,6 +401,17 @@ h3 {
   border-radius: 6px;
   background: var(--white);
   cursor: pointer;
+  overflow: hidden;
+  transition: background 160ms var(--ease-out), border-color 160ms var(--ease-out), color 160ms var(--ease-out), transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
+}
+
+.category-tabs button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(23, 33, 30, 0.08);
+}
+
+.category-tabs button:active {
+  transform: translateY(0) scale(0.97);
 }
 
 .category-tabs button[aria-selected="true"] {
@@ -362,6 +455,14 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--white);
+  animation: fade-up 280ms var(--ease-out) both;
+  transition: border-color 180ms var(--ease-out), box-shadow 180ms var(--ease-out), transform 180ms var(--ease-out);
+}
+
+.product-card:hover {
+  border-color: rgba(8, 118, 92, 0.38);
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-3px);
 }
 
 .product-card__image {
@@ -375,6 +476,7 @@ h3 {
   aspect-ratio: 4 / 3;
   background: var(--surface);
   cursor: pointer;
+  isolation: isolate;
 }
 
 .product-card__image img {
@@ -392,6 +494,7 @@ h3 {
   position: absolute;
   top: 10px;
   left: 10px;
+  z-index: 2;
   padding: 4px 8px;
   border-radius: 4px;
   color: var(--ink);
@@ -622,6 +725,7 @@ h3 {
 
 .mobile-actions a,
 .mobile-actions button {
+  position: relative;
   display: flex;
   min-width: 0;
   padding: 6px;
@@ -633,6 +737,13 @@ h3 {
   background: transparent;
   font-size: 13px;
   cursor: pointer;
+  overflow: hidden;
+  transition: background 160ms var(--ease-out), color 160ms var(--ease-out), transform 160ms var(--ease-out);
+}
+
+.mobile-actions a:active,
+.mobile-actions button:active {
+  transform: scale(0.98);
 }
 
 .mobile-actions button {
@@ -652,12 +763,17 @@ dialog {
   box-shadow: var(--shadow);
 }
 
+dialog[open] {
+  animation: dialog-in 220ms var(--ease-out);
+}
+
 .product-dialog {
   width: min(94vw, 1040px);
 }
 
 dialog::backdrop {
   background: rgba(16, 24, 21, 0.66);
+  animation: backdrop-in 180ms ease-out;
 }
 
 .dialog-close {
@@ -709,6 +825,7 @@ dialog::backdrop {
 }
 
 .product-gallery__thumbs button {
+  position: relative;
   display: grid;
   overflow: hidden;
   padding: 0;
@@ -718,11 +835,17 @@ dialog::backdrop {
   border-radius: 6px;
   background: var(--white);
   cursor: pointer;
+  overflow: hidden;
+  transition: border-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out), transform 160ms var(--ease-out);
 }
 
 .product-gallery__thumbs button[aria-pressed="true"] {
   border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(8, 118, 92, 0.15);
+}
+
+.product-gallery__thumbs button:hover {
+  transform: translateY(-1px);
 }
 
 .product-gallery__thumbs img {
@@ -938,12 +1061,18 @@ dialog::backdrop {
   padding: 13px 0;
   font-weight: 700;
   cursor: pointer;
+  transition: color 160ms var(--ease-out);
+}
+
+.product-faqs summary:hover {
+  color: var(--primary-dark);
 }
 
 .product-faqs p {
   margin: -2px 0 14px;
   color: var(--muted);
   font-size: 14px;
+  animation: fade-up 180ms var(--ease-out);
 }
 
 .contact-dialog__content {
@@ -962,6 +1091,7 @@ dialog::backdrop {
 }
 
 .phone-list a {
+  position: relative;
   display: flex;
   min-width: 0;
   padding: 13px;
@@ -970,6 +1100,19 @@ dialog::backdrop {
   border-radius: 6px;
   gap: 10px;
   font-weight: 800;
+  overflow: hidden;
+  transition: border-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out), transform 160ms var(--ease-out), color 160ms var(--ease-out);
+}
+
+.phone-list a:hover {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+  box-shadow: 0 8px 18px rgba(23, 33, 30, 0.09);
+  transform: translateY(-1px);
+}
+
+.phone-list a:active {
+  transform: translateY(0) scale(0.99);
 }
 
 .phone-list small {
@@ -1090,6 +1233,27 @@ dialog::backdrop {
   margin-bottom: 0;
   color: var(--primary-dark);
   font-size: 13px;
+}
+
+.copy-status--active {
+  animation: status-pop 180ms var(--ease-out);
+}
+
+.copy-status--error {
+  color: var(--accent);
+}
+
+.tap-ripple {
+  position: absolute;
+  top: var(--tap-y);
+  left: var(--tap-x);
+  z-index: 5;
+  width: var(--tap-size);
+  height: var(--tap-size);
+  border-radius: 50%;
+  pointer-events: none;
+  background: currentColor;
+  animation: tap-ripple 520ms var(--ease-out) forwards;
 }
 
 @media (min-width: 900px) {
@@ -1280,7 +1444,16 @@ dialog::backdrop {
     scroll-behavior: auto;
   }
 
-  .product-card__image img {
-    transition: none;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .tap-ripple {
+    display: none;
   }
 }
