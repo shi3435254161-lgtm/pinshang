@@ -995,6 +995,26 @@ dialog::backdrop {
   font-size: 13px;
 }
 
+.wechat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  align-items: center;
+  gap: 8px;
+}
+
+.wechat-actions span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.wechat-actions[hidden] {
+  display: none;
+}
+
 .qr-placeholder {
   display: grid;
   width: 112px;

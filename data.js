@@ -7,7 +7,9 @@ window.SHOP_DATA = {
     name: "联塑管道 · 品尚装饰",
     serviceArea: "宁陵县及周边乡村",
     phones: ["15836485998", "13781449660"],
-    wechatQr: ""
+    wechatQr: "",
+    wechatId: "",
+    wechatLink: ""
   },
   categories: ["全部", "热水器", "烟机灶具", "卫浴", "水电管道"],
   products: [

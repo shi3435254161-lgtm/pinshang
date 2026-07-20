@@ -14,6 +14,9 @@
   const inquiryVillage = document.getElementById("inquiryVillage");
   const inquiryNeed = document.getElementById("inquiryNeed");
   const copyStatus = document.getElementById("copyStatus");
+  const wechatActions = document.getElementById("wechatActions");
+  const wechatIdText = document.getElementById("wechatIdText");
+  const wechatLinkButton = document.getElementById("wechatLinkButton");
   let selectedCategory = "全部";
   let activeProduct = null;
 
@@ -53,14 +56,30 @@
     return haystack.includes(query.toLowerCase());
   }
 
-  function renderWechatQr() {
+  function renderWechatContact() {
     const qrPlaceholder = document.getElementById("qrPlaceholder");
     const qrImage = (data.store.wechatQr || "").trim();
-    if (!qrPlaceholder || !qrImage) return;
+    const wechatId = (data.store.wechatId || "").trim();
+    const wechatLink = (data.store.wechatLink || "").trim();
 
-    qrPlaceholder.classList.add("qr-placeholder--image");
-    qrPlaceholder.setAttribute("aria-label", "业务微信二维码");
-    qrPlaceholder.innerHTML = `<img src="${escapeHtml(qrImage)}" alt="业务微信二维码">`;
+    if (qrPlaceholder && qrImage) {
+      qrPlaceholder.classList.add("qr-placeholder--image");
+      qrPlaceholder.setAttribute("aria-label", "业务微信二维码，微信内长按识别");
+      qrPlaceholder.innerHTML = `<img src="${escapeHtml(qrImage)}" alt="业务微信二维码">`;
+    }
+
+    if (wechatActions && (wechatId || wechatLink)) {
+      wechatActions.hidden = false;
+    }
+
+    if (wechatIdText && wechatId) {
+      wechatIdText.textContent = `微信号：${wechatId}`;
+    }
+
+    if (wechatLinkButton && wechatLink) {
+      wechatLinkButton.href = wechatLink;
+      wechatLinkButton.hidden = false;
+    }
   }
 
   function productCard(product) {
@@ -200,7 +219,7 @@
             <p class="detail-description">${escapeHtml(product.description)}</p>
             <div class="tag-list">${(product.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
             <div class="detail-actions">
-              <button class="button button--primary" type="button" data-quote="${product.id}">${icon("message-circle")}微信询价</button>
+              <button class="button button--primary" type="button" data-quote="${product.id}">${icon("message-circle")}微信咨询</button>
               <a class="button button--secondary" href="tel:${data.store.phones[0]}">${icon("phone")}电话咨询</a>
               <button class="icon-button" type="button" data-share-product="${product.id}" aria-label="分享这个产品" title="分享">${icon("share-2")}</button>
             </div>
@@ -297,6 +316,7 @@
     const quoteButton = event.target.closest("[data-quote]");
     const galleryButton = event.target.closest("[data-gallery-image]");
     const shareButton = event.target.closest("[data-share-product]");
+    const copyWechatButton = event.target.closest("[data-copy-wechat]");
     const contactButton = event.target.closest("[data-open-contact]");
     const closeButton = event.target.closest("[data-close-dialog]");
 
@@ -317,6 +337,15 @@
       openContact(product);
     } else if (shareButton) {
       shareProduct(shareButton.dataset.shareProduct);
+    } else if (copyWechatButton) {
+      const wechatId = (data.store.wechatId || "").trim();
+      if (wechatId) {
+        copyText(wechatId).then(() => {
+          copyStatus.textContent = "微信号已复制，请到微信搜索添加。";
+        }).catch(() => {
+          copyStatus.textContent = "复制失败，请手动输入微信号。";
+        });
+      }
     } else if (contactButton) {
       openContact(null);
     } else if (closeButton) {
@@ -355,7 +384,7 @@
   renderTabs();
   renderProducts();
   renderCases();
-  renderWechatQr();
+  renderWechatContact();
 
   const initialProduct = new URL(window.location.href).searchParams.get("product");
   if (initialProduct) showProduct(initialProduct, false);

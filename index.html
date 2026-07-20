@@ -37,7 +37,7 @@
         </div>
         <button class="button button--primary" type="button" data-open-contact>
           <img src="assets/icons/message-circle.svg" alt="">
-          微信询价
+          微信咨询
         </button>
       </div>
     </section>
@@ -154,7 +154,7 @@
     </a>
     <button type="button" data-open-contact>
       <img src="assets/icons/message-circle.svg" alt="">
-      <span>微信询价</span>
+      <span>微信咨询</span>
     </button>
     <a href="tel:15836485998">
       <img src="assets/icons/phone.svg" alt="">
@@ -176,7 +176,7 @@
     <div class="contact-dialog__content">
       <p class="eyebrow">咨询与预约</p>
       <h2 id="contactDialogTitle">联系联塑管道 · 品尚装饰</h2>
-      <p class="dialog-lead">选择电话直接联系，或复制询价内容后发给业务微信。</p>
+      <p class="dialog-lead">电话可直接拨打；微信建议先复制咨询内容，再加业务微信发送。</p>
 
       <div class="phone-list">
         <a href="tel:15836485998"><img src="assets/icons/phone.svg" alt=""><span><small>联系电话一</small>158 3648 5998</span></a>
@@ -190,7 +190,12 @@
         </div>
         <div>
           <strong>业务微信</strong>
-          <p>这里应放负责接单的联系人二维码，不是收款码。</p>
+          <p id="wechatHelp">微信内长按二维码可识别添加；如果填写了微信号，也可以一键复制后到微信搜索。</p>
+          <div class="wechat-actions" id="wechatActions" hidden>
+            <span id="wechatIdText"></span>
+            <button class="button button--quiet" type="button" data-copy-wechat>复制微信号</button>
+            <a class="button button--quiet" id="wechatLinkButton" href="#" rel="noopener" hidden>打开微信咨询</a>
+          </div>
         </div>
       </div>
 
