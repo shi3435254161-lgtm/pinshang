@@ -1104,6 +1104,28 @@ h3 {
   font-size: 14px;
 }
 
+.visit-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 12px;
+  gap: 8px;
+}
+
+.visit-stats span {
+  padding: 4px 8px;
+  border: 1px solid rgba(203, 212, 208, 0.16);
+  border-radius: 999px;
+  color: #dce5e0;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+}
+
+.visit-stats b {
+  color: var(--white);
+  font-weight: 800;
+}
+
 .site-footer small {
   color: #98a69f;
 }
