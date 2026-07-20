@@ -1528,6 +1528,12 @@ dialog::backdrop {
   border-bottom: 1px solid var(--line);
   grid-template-columns: 112px 1fr;
   gap: 18px;
+  transition: background-color 180ms var(--ease-out), box-shadow 180ms var(--ease-out);
+}
+
+.wechat-panel--attention {
+  background: #f0faf6;
+  box-shadow: inset 4px 0 0 var(--primary);
 }
 
 .wechat-panel[hidden] {

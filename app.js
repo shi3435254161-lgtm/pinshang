@@ -107,11 +107,17 @@
     return /micromessenger/i.test(window.navigator.userAgent);
   }
 
+  function getWechatContact() {
+    return {
+      qrImage: (data.store.wechatQr || "").trim(),
+      wechatId: (data.store.wechatId || "").trim(),
+      link: (data.store.wechatLink || "").trim()
+    };
+  }
+
   function renderWechatContact() {
     const qrPlaceholder = document.getElementById("qrPlaceholder");
-    const qrImage = (data.store.wechatQr || "").trim();
-    const wechatId = (data.store.wechatId || "").trim();
-    const wechatLink = (data.store.wechatLink || "").trim();
+    const { qrImage, wechatId, link: wechatLink } = getWechatContact();
     const hasWechatContact = Boolean(qrImage || wechatId || wechatLink);
 
     if (wechatPanel) {
@@ -119,7 +125,13 @@
     }
 
     if (copyOpenWechatLabel) {
-      copyOpenWechatLabel.textContent = wechatLink || !isWeChatBrowser() ? "复制咨询内容并打开微信" : "复制咨询内容";
+      if (wechatLink) {
+        copyOpenWechatLabel.textContent = "复制并打开微信客服";
+      } else if (qrImage || wechatId) {
+        copyOpenWechatLabel.textContent = "复制后加业务微信";
+      } else {
+        copyOpenWechatLabel.textContent = "复制咨询内容";
+      }
     }
 
     if (qrPlaceholder && qrImage) {
@@ -387,22 +399,35 @@
   }
 
   function openWechatApp() {
-    const wechatLink = (data.store.wechatLink || "").trim();
-    window.location.href = wechatLink || "weixin://";
+    const { link } = getWechatContact();
+    window.location.href = link || "weixin://";
+  }
+
+  function highlightWechatContact() {
+    if (!wechatPanel || wechatPanel.hidden) return;
+    wechatPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+    wechatPanel.classList.add("wechat-panel--attention");
+    window.setTimeout(() => wechatPanel.classList.remove("wechat-panel--attention"), 1300);
   }
 
   async function copyInquiryAndOpenWechat() {
     try {
       await copyText(buildInquiryText());
-      const wechatLink = (data.store.wechatLink || "").trim();
-      if (wechatLink) {
-        showCopyStatus("咨询内容已复制，正在打开业务微信；打开后粘贴发送即可。");
+      const { qrImage, wechatId, link } = getWechatContact();
+      if (link) {
+        showCopyStatus("咨询内容已复制，正在打开微信客服；进入后粘贴发送即可。");
         window.setTimeout(openWechatApp, 220);
       } else if (!isWeChatBrowser()) {
         showCopyStatus("咨询内容已复制，正在尝试打开微信；如果没有跳转，请手动打开微信粘贴发送。");
         window.setTimeout(openWechatApp, 220);
+      } else if (qrImage) {
+        highlightWechatContact();
+        showCopyStatus("咨询内容已复制。请长按业务微信二维码，选择识别图中二维码添加；添加后粘贴发送。");
+      } else if (wechatId) {
+        highlightWechatContact();
+        showCopyStatus("咨询内容已复制。请先复制上方微信号，到微信搜索添加；添加后粘贴发送。");
       } else {
-        showCopyStatus("咨询内容已复制。请返回微信聊天粘贴发送；急用可直接拨打安装师傅电话。");
+        showCopyStatus("咨询内容已复制。当前还没配置业务微信，急用可直接拨打安装师傅电话。");
       }
     } catch (error) {
       showCopyStatus("复制失败，请手动复制内容或直接拨打上方电话。", true);
