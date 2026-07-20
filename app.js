@@ -405,9 +405,9 @@
     else dialog.setAttribute("open", "");
   }
 
-  function openContact(product) {
-    activeProduct = product || activeProduct;
-    inquiryProduct.value = activeProduct ? activeProduct.name : "暂未指定，先说明需求";
+  function openContact(product = null) {
+    activeProduct = product || null;
+    inquiryProduct.value = activeProduct ? activeProduct.name : "未指定，先说明需求";
     inquiryVillage.value = "";
     inquiryNeed.value = "";
     clearCopyStatus();
@@ -416,10 +416,16 @@
   }
 
   function buildInquiryText() {
-    const product = inquiryProduct.value.trim() || "未指定";
+    const product = inquiryProduct.value.trim() || "未指定，先说明需求";
     const village = inquiryVillage.value.trim() || "待补充";
     const need = inquiryNeed.value.trim() || "想了解产品价格、配送、安装费用和上门时间";
-    return `您好，我在${data.store.name}页面看到信息，想咨询/预约：\n意向产品：${product}\n所在村镇：${village}\n需求说明：${need}\n请帮我确认价格、安装包含内容、可能增加的费用和是否方便上门。`;
+    return [
+      `您好，我在${data.store.name}页面看到信息，想咨询/预约。`,
+      `【意向产品】${product}`,
+      `【所在村镇】${village}`,
+      `【需求说明】${need}`,
+      "请帮我确认价格、安装包含内容、可能增加的费用和是否方便上门。"
+    ].join("\n");
   }
 
   async function copyText(text) {
