@@ -211,7 +211,7 @@
     <div class="contact-dialog__content">
       <p class="eyebrow">咨询与预约</p>
       <h2 id="contactDialogTitle">联系联塑管道 · 品尚装饰</h2>
-      <p class="dialog-lead">电话可直接拨打；微信建议先复制咨询内容，再加业务微信发送。</p>
+      <p class="dialog-lead">个人微信不能稳定从网页直达聊天。建议先复制询价内容，再扫码或搜索业务微信发送；手机会尝试帮你打开微信。</p>
 
       <div class="phone-list">
         <a href="tel:15836485998"><img src="assets/icons/phone.svg" alt=""><span><small>联系电话一</small>158 3648 5998</span></a>
@@ -238,7 +238,11 @@
         <label>意向产品<input id="inquiryProduct" name="product" type="text" readonly></label>
         <label>所在村镇<input id="inquiryVillage" name="village" type="text" placeholder="例如：宁陵县XX乡XX村"></label>
         <label>需求说明<textarea id="inquiryNeed" name="need" rows="3" placeholder="例如：旧热水器更换，需要拆旧"></textarea></label>
-        <button class="button button--primary" type="submit"><img src="assets/icons/copy.svg" alt="">复制询价内容</button>
+        <div class="inquiry-actions">
+          <button class="button button--primary" type="button" data-copy-open-wechat><img src="assets/icons/message-circle.svg" alt="">复制内容并打开微信</button>
+          <button class="button button--secondary" type="submit"><img src="assets/icons/copy.svg" alt="">只复制询价内容</button>
+        </div>
+        <p class="contact-method-note">打开微信后，把已复制的内容粘贴发给业务微信；如果没有跳转，请手动打开微信。</p>
         <p class="copy-status" id="copyStatus" role="status" aria-live="polite"></p>
       </form>
     </div>

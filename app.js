@@ -17,6 +17,7 @@
   const wechatActions = document.getElementById("wechatActions");
   const wechatIdText = document.getElementById("wechatIdText");
   const wechatLinkButton = document.getElementById("wechatLinkButton");
+  const wechatHelp = document.getElementById("wechatHelp");
   let selectedCategory = "全部";
   let activeProduct = null;
 
@@ -108,6 +109,10 @@
       qrPlaceholder.classList.add("qr-placeholder--image");
       qrPlaceholder.setAttribute("aria-label", "业务微信二维码，微信内长按识别");
       qrPlaceholder.innerHTML = `<img src="${escapeHtml(qrImage)}" alt="业务微信二维码">`;
+    } else if (qrPlaceholder) {
+      qrPlaceholder.classList.remove("qr-placeholder--image");
+      qrPlaceholder.setAttribute("aria-label", "业务微信二维码待补充");
+      qrPlaceholder.innerHTML = `${icon("qr-code")}<span>二维码待补充</span>`;
     }
 
     if (wechatActions && (wechatId || wechatLink)) {
@@ -121,6 +126,18 @@
     if (wechatLinkButton && wechatLink) {
       wechatLinkButton.href = wechatLink;
       wechatLinkButton.hidden = false;
+    }
+
+    if (wechatHelp) {
+      if (qrImage && wechatId) {
+        wechatHelp.textContent = "可长按二维码识别添加，也可复制微信号到微信搜索；添加后粘贴询价内容发送。";
+      } else if (qrImage) {
+        wechatHelp.textContent = "可长按二维码识别添加；添加后粘贴询价内容发送。";
+      } else if (wechatId) {
+        wechatHelp.textContent = "可复制微信号到微信搜索添加；添加后粘贴询价内容发送。";
+      } else {
+        wechatHelp.textContent = "业务微信二维码和微信号补充后，客户可扫码或搜索添加；当前也可以先复制询价内容后电话联系。";
+      }
     }
   }
 
@@ -352,6 +369,21 @@
     textarea.remove();
   }
 
+  function openWechatApp() {
+    const wechatLink = (data.store.wechatLink || "").trim();
+    window.location.href = wechatLink || "weixin://";
+  }
+
+  async function copyInquiryAndOpenWechat() {
+    try {
+      await copyText(buildInquiryText());
+      showCopyStatus("询价内容已复制，正在尝试打开微信；打开后粘贴发送给业务微信。");
+      window.setTimeout(openWechatApp, 220);
+    } catch (error) {
+      showCopyStatus("复制失败，请手动复制内容或直接拨打上方电话。", true);
+    }
+  }
+
   async function shareProduct(id) {
     const product = data.products.find((item) => item.id === id);
     if (!product) return;
@@ -377,6 +409,7 @@
     const galleryButton = event.target.closest("[data-gallery-image]");
     const shareButton = event.target.closest("[data-share-product]");
     const copyWechatButton = event.target.closest("[data-copy-wechat]");
+    const copyOpenWechatButton = event.target.closest("[data-copy-open-wechat]");
     const contactButton = event.target.closest("[data-open-contact]");
     const closeButton = event.target.closest("[data-close-dialog]");
 
@@ -397,6 +430,8 @@
       openContact(product);
     } else if (shareButton) {
       shareProduct(shareButton.dataset.shareProduct);
+    } else if (copyOpenWechatButton) {
+      copyInquiryAndOpenWechat();
     } else if (copyWechatButton) {
       const wechatId = (data.store.wechatId || "").trim();
       if (wechatId) {
@@ -431,7 +466,7 @@
     event.preventDefault();
     try {
       await copyText(buildInquiryText());
-      showCopyStatus("询价内容已复制，请返回微信发送给店主。");
+      showCopyStatus("询价内容已复制，请打开微信粘贴发送给店主。");
     } catch (error) {
       showCopyStatus("复制失败，请直接拨打上方电话。", true);
     }
