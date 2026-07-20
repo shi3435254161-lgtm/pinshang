@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>商品管理助手｜联塑管道 · 品尚装饰</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="admin-header">
+    <div>
+      <p>本地管理</p>
+      <h1>商品管理助手</h1>
+    </div>
+    <div class="header-actions">
+      <a class="button button--light" href="/" target="_blank">预览网站</a>
+      <button class="button" type="button" id="saveAllButton">保存到 data.js</button>
+      <button class="button button--accent" type="button" id="buildButton">生成上传文件夹</button>
+    </div>
+  </header>
+
+  <main class="admin-layout">
+    <aside class="sidebar">
+      <div class="sidebar-tools">
+        <input id="productSearch" type="search" placeholder="搜索商品">
+        <button class="button button--full" type="button" id="newProductButton">新增商品</button>
+      </div>
+      <nav class="product-list" id="productList" aria-label="商品列表"></nav>
+    </aside>
+
+    <section class="editor">
+      <div class="status-line" id="statusLine">正在加载商品数据...</div>
+
+      <details class="panel" open>
+        <summary>店铺联系设置</summary>
+        <div class="form-grid form-grid--3">
+          <label>店名<input id="storeName" type="text"></label>
+          <label>服务范围<input id="storeArea" type="text"></label>
+          <label>业务微信号<input id="storeWechatId" type="text" placeholder="填你妈妈的业务微信号"></label>
+          <label>电话一<input id="storePhone1" type="text"></label>
+          <label>电话二<input id="storePhone2" type="text"></label>
+          <label>微信二维码路径<input id="storeWechatQr" type="text" placeholder="assets/wechat-qr.jpg"></label>
+        </div>
+      </details>
+
+      <section class="panel">
+        <div class="editor-title">
+          <div>
+            <p id="editorHint">正在编辑商品</p>
+            <h2 id="editorTitle">未选择商品</h2>
+          </div>
+          <div class="editor-actions">
+            <button class="button button--light" type="button" id="duplicateButton">复制此商品</button>
+            <button class="button button--danger" type="button" id="deleteButton">删除</button>
+          </div>
+        </div>
+
+        <form id="productForm" class="product-form">
+          <div class="form-grid form-grid--3">
+            <label>商品 ID<input id="id" name="id" type="text" placeholder="midea-water-heater-60l"></label>
+            <label>分类<input id="category" name="category" type="text" list="categoryOptions"></label>
+            <label>商品名<input id="name" name="name" type="text"></label>
+            <label>品牌<input id="brand" name="brand" type="text"></label>
+            <label>型号<input id="model" name="model" type="text"></label>
+            <label>价格<input id="price" name="price" type="text" placeholder="699元 / 到店咨询"></label>
+            <label>价格说明<input id="priceNote" name="priceNote" type="text"></label>
+            <label>主图路径<input id="image" name="image" type="text" placeholder="assets/products/xxx.jpg"></label>
+            <label>上传商品图片<input id="imageUpload" type="file" accept="image/png,image/jpeg,image/webp"></label>
+          </div>
+
+          <label>一句话介绍<textarea id="description" name="description" rows="3"></textarea></label>
+          <div class="form-grid form-grid--2">
+            <label>标签，一行一个<textarea id="tags" name="tags" rows="4"></textarea></label>
+            <label>搜索别名，一行一个<textarea id="aliases" name="aliases" rows="4"></textarea></label>
+          </div>
+          <label>图册路径，一行一个<textarea id="gallery" name="gallery" rows="3"></textarea></label>
+          <label>商品卖点，一行一个<textarea id="sellingPoints" name="sellingPoints" rows="5"></textarea></label>
+          <label>规格参数，一行一个，格式：参数=内容<textarea id="specs" name="specs" rows="7"></textarea></label>
+          <div class="form-grid form-grid--2">
+            <label>选购说明，一行一个<textarea id="buyingGuide" name="buyingGuide" rows="6"></textarea></label>
+            <label>安装前确认，一行一个<textarea id="installCheck" name="installCheck" rows="6"></textarea></label>
+          </div>
+          <div class="form-grid form-grid--2">
+            <label>基础安装包含，一行一个<textarea id="included" name="included" rows="5"></textarea></label>
+            <label>可能另收费，一行一个<textarea id="extras" name="extras" rows="5"></textarea></label>
+          </div>
+          <label>常见问题，一行一个，格式：问题=回答<textarea id="faqs" name="faqs" rows="6"></textarea></label>
+          <label>注意事项<textarea id="notice" name="notice" rows="3"></textarea></label>
+
+          <div class="footer-actions">
+            <button class="button" type="submit">保存当前商品到列表</button>
+            <button class="button button--light" type="button" id="copyLinkButton">复制商品链接参数</button>
+          </div>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <datalist id="categoryOptions"></datalist>
+  <script src="admin.js"></script>
+</body>
+</html>
