@@ -5,7 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#176b52">
+  <meta name="application-name" content="品尚上货">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="品尚上货">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>手机上货｜联塑管道 · 品尚装饰</title>
+  <link rel="manifest" href="mobile-admin.webmanifest">
+  <link rel="apple-touch-icon" href="assets/mobile-admin-icon-192.png">
   <link rel="stylesheet" href="mobile-admin.css">
 </head>
 <body>
@@ -19,6 +25,14 @@
   </header>
 
   <main>
+    <section class="install-tip" id="installTip" hidden>
+      <div>
+        <strong>像 App 一样打开</strong>
+        <p id="installHint">添加到手机桌面后，以后点“品尚上货”图标就能上货。</p>
+      </div>
+      <button class="secondary-button" id="installAppButton" type="button">安装到手机</button>
+    </section>
+
     <section class="setup" id="setupView">
       <div class="setup__mark">店主专用</div>
       <h1>第一次由家人帮忙连接</h1>

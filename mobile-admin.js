@@ -26,6 +26,7 @@
   let isNewProduct = false;
   let isPublishing = false;
   let pendingImages = [];
+  let installPromptEvent = null;
 
   const listFields = ["sellingPoints", "buyingGuide", "installCheck", "included", "extras"];
   const fieldIds = {
@@ -122,6 +123,64 @@
     if (/409|changed on another device/i.test(message)) return "商品资料已在另一台设备更新，请先返回列表刷新后再改。";
     if (/Failed to fetch|NetworkError|network/i.test(message)) return "网络连接失败。请切换手机网络后重试，或稍后再发布。";
     return message;
+  }
+
+  function isStandaloneApp() {
+    return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  }
+
+  function setupAppInstall() {
+    const tip = $("#installTip");
+    const button = $("#installAppButton");
+    const hint = $("#installHint");
+    if (!tip || !button || isStandaloneApp()) return;
+
+    const ua = window.navigator.userAgent;
+    const isWeChat = /micromessenger/i.test(ua);
+    const isIOS = /iphone|ipad|ipod/i.test(ua);
+
+    tip.hidden = false;
+    button.hidden = true;
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./mobile-admin-sw.js").catch(() => {});
+    }
+
+    if (isWeChat) {
+      hint.textContent = "微信里不能直接安装。请点右上角菜单，用浏览器打开，再选择添加到手机桌面。";
+      return;
+    }
+
+    if (isIOS) {
+      hint.textContent = "苹果手机请点浏览器分享按钮，再选择“添加到主屏幕”。";
+      return;
+    }
+
+    hint.textContent = "可以把上货后台安装到手机桌面，以后点图标直接打开。";
+    button.hidden = false;
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      installPromptEvent = event;
+      button.hidden = false;
+      hint.textContent = "点右侧按钮安装到手机桌面，以后不用记网址。";
+    });
+
+    button.addEventListener("click", async () => {
+      if (!installPromptEvent) {
+        hint.textContent = "如果没有弹出安装，请点浏览器菜单，选择“添加到主屏幕”或“安装应用”。";
+        return;
+      }
+      installPromptEvent.prompt();
+      await installPromptEvent.userChoice.catch(() => null);
+      installPromptEvent = null;
+      tip.hidden = true;
+    });
+
+    window.addEventListener("appinstalled", () => {
+      installPromptEvent = null;
+      tip.hidden = true;
+    });
   }
 
   async function github(path, options = {}) {
@@ -561,5 +620,6 @@
     location.reload();
   });
 
+  setupAppInstall();
   initialize();
 })();
