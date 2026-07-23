@@ -5,7 +5,7 @@ $uploadDir = "F:\pinshang-shop-upload"
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $zipPath = "F:\pinshang-shop-deploy-$stamp.zip"
 
-$required = @("index.html", "styles.css", "data.js", "app.js", "assets", ".nojekyll")
+$required = @("index.html", "styles.css", "data.js", "app.js", "site.webmanifest", "site-sw.js", "assets", ".nojekyll")
 foreach ($item in $required) {
   $path = Join-Path $projectRoot $item
   if (-not (Test-Path -LiteralPath $path)) {
@@ -17,7 +17,7 @@ if (-not (Test-Path -LiteralPath $uploadDir)) {
   New-Item -ItemType Directory -Path $uploadDir | Out-Null
 }
 
-foreach ($file in @("index.html", "styles.css", "data.js", "app.js", ".nojekyll")) {
+foreach ($file in @("index.html", "styles.css", "data.js", "app.js", "site.webmanifest", "site-sw.js", ".nojekyll")) {
   Copy-Item -LiteralPath (Join-Path $projectRoot $file) -Destination $uploadDir -Force
 }
 
