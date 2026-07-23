@@ -6,7 +6,7 @@ const vm = require("vm");
 
 const ROOT = __dirname;
 const START_PORT = Number(process.env.PORT || 5177);
-const MAX_BODY = 12 * 1024 * 1024;
+const MAX_BODY = 90 * 1024 * 1024;
 
 const MIME = {
   ".css": "text/css; charset=utf-8",
@@ -17,7 +17,10 @@ const MIME = {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".svg": "image/svg+xml",
-  ".webp": "image/webp"
+  ".webp": "image/webp",
+  ".mp4": "video/mp4",
+  ".webm": "video/webm",
+  ".ogg": "video/ogg"
 };
 
 function sendJson(res, status, payload) {
@@ -31,7 +34,7 @@ function readBody(req) {
     req.on("data", (chunk) => {
       body += chunk;
       if (body.length > MAX_BODY) {
-        reject(new Error("请求内容太大，图片建议压缩到 5MB 以内。"));
+        reject(new Error("请求内容太大，图片或视频请先压缩后再上传。"));
         req.destroy();
       }
     });
@@ -120,6 +123,41 @@ function uploadProductImage(payload) {
   return `assets/products/${fileName}`;
 }
 
+function uploadProductVideo(payload) {
+  const rawName = String(payload.fileName || "product-video").toLowerCase();
+  const ext = path.extname(rawName);
+  if (![".mp4", ".webm", ".ogg"].includes(ext)) {
+    throw new Error("视频只支持 mp4、webm、ogg。");
+  }
+  const preferred = String(payload.preferredName || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+  const stamp = new Date().toISOString().replace(/[-:T.Z]/g, "").slice(0, 14);
+  const fileName = `${preferred || "product"}-${stamp}${ext}`;
+  const buffer = Buffer.from(String(payload.base64 || ""), "base64");
+  if (!buffer.length) throw new Error("视频内容为空。");
+  if (buffer.length > 60 * 1024 * 1024) throw new Error("视频太大，建议压缩到 60MB 以内。");
+  const targetDir = path.join(ROOT, "assets", "products");
+  fs.mkdirSync(targetDir, { recursive: true });
+  fs.writeFileSync(path.join(targetDir, fileName), buffer);
+  return `assets/products/${fileName}`;
+}
+
+function deleteProductVideo(payload) {
+  const relativePath = String(payload.path || "").replace(/\\/g, "/");
+  if (!/^assets\/products\/[a-z0-9][a-z0-9-]*-\d{14}\.(mp4|webm|ogg)$/i.test(relativePath)) {
+    throw new Error("只能删除商品后台上传的视频文件。");
+  }
+  const target = path.resolve(ROOT, relativePath);
+  const productsDir = path.resolve(ROOT, "assets", "products");
+  if (!target.startsWith(`${productsDir}${path.sep}`)) {
+    throw new Error("视频路径不安全，已取消删除。");
+  }
+  if (fs.existsSync(target)) fs.unlinkSync(target);
+}
+
 function runBuildPackage() {
   return new Promise((resolve, reject) => {
     const script = path.join(ROOT, "build-upload-package.ps1");
@@ -154,6 +192,18 @@ async function handleApi(req, res) {
       const payload = await readBody(req);
       const imagePath = uploadProductImage(payload);
       sendJson(res, 200, { ok: true, path: imagePath });
+      return;
+    }
+    if (req.method === "POST" && req.url === "/api/product-video") {
+      const payload = await readBody(req);
+      const videoPath = uploadProductVideo(payload);
+      sendJson(res, 200, { ok: true, path: videoPath });
+      return;
+    }
+    if (req.method === "POST" && req.url === "/api/delete-product-video") {
+      const payload = await readBody(req);
+      deleteProductVideo(payload);
+      sendJson(res, 200, { ok: true, message: "视频已删除" });
       return;
     }
     if (req.method === "POST" && req.url === "/api/build") {

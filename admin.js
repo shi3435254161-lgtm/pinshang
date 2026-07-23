@@ -11,6 +11,9 @@
     "price",
     "priceNote",
     "image",
+    "videoUrl",
+    "videoCover",
+    "videoIntro",
     "description",
     "tags",
     "aliases",
@@ -29,6 +32,7 @@
 
   let data = null;
   let selectedId = "";
+  let lastUploadedVideoPath = "";
 
   function setStatus(message, type) {
     const status = $("#statusLine");
@@ -120,6 +124,7 @@
 
   function fillProduct(product) {
     selectedId = product.id;
+    lastUploadedVideoPath = "";
     $("#editorTitle").textContent = product.name || "未命名商品";
     $("#editorHint").textContent = `${product.category || "未分类"} · ${product.id}`;
     fields.forEach((name) => {
@@ -173,6 +178,9 @@
       brand: "品牌待确认",
       model: "型号待确认",
       image: "",
+      videoUrl: "",
+      videoCover: "",
+      videoIntro: "",
       gallery: [],
       price: "价格待录入",
       priceNote: "价格以到店或微信确认为准",
@@ -223,7 +231,7 @@
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
-      reader.onerror = () => reject(new Error("图片读取失败。"));
+      reader.onerror = () => reject(new Error("文件读取失败。"));
       reader.readAsDataURL(file);
     });
   }
@@ -244,6 +252,41 @@
       $("#gallery").value = gallery.join("\n");
     }
     setStatus(`图片已保存：${result.path}`, "success");
+  }
+
+  async function uploadVideo(file) {
+    if (!file) return;
+    const product = readProductFromForm();
+    const previousVideo = $("#videoUrl").value.trim();
+    const base64 = await fileToBase64(file);
+    const result = await api("/api/product-video", {
+      fileName: file.name,
+      preferredName: product.id || product.name,
+      base64
+    });
+    if (previousVideo && previousVideo === lastUploadedVideoPath && previousVideo !== result.path) {
+      await api("/api/delete-product-video", { path: previousVideo }).catch(() => null);
+    }
+    $("#videoUrl").value = result.path;
+    lastUploadedVideoPath = result.path;
+    if (!$("#videoCover").value.trim() && product.image) $("#videoCover").value = product.image;
+    setStatus(`视频已保存：${result.path}`, "success");
+  }
+
+  async function clearVideo() {
+    const videoPath = $("#videoUrl").value.trim();
+    if (videoPath && !confirm("确定清空这个商品的视频吗？如果是刚上传的视频文件，也会从本地删除。")) return;
+    if (videoPath) {
+      if (videoPath === lastUploadedVideoPath) {
+        await api("/api/delete-product-video", { path: videoPath }).catch(() => null);
+      }
+    }
+    $("#videoUrl").value = "";
+    $("#videoCover").value = "";
+    $("#videoIntro").value = "";
+    $("#videoUpload").value = "";
+    lastUploadedVideoPath = "";
+    setStatus("视频已清空，记得保存当前商品并保存到 data.js。", "success");
   }
 
   async function init() {
@@ -284,6 +327,8 @@
   $("#saveAllButton").addEventListener("click", () => saveAll().catch((error) => setStatus(error.message, "error")));
   $("#buildButton").addEventListener("click", () => buildUpload().catch((error) => setStatus(error.message, "error")));
   $("#imageUpload").addEventListener("change", (event) => uploadImage(event.target.files[0]).catch((error) => setStatus(error.message, "error")));
+  $("#videoUpload").addEventListener("change", (event) => uploadVideo(event.target.files[0]).catch((error) => setStatus(error.message, "error")));
+  $("#clearVideoButton").addEventListener("click", () => clearVideo().catch((error) => setStatus(error.message, "error")));
   $("#deleteButton").addEventListener("click", () => {
     const product = getSelectedProduct();
     if (!product) return;

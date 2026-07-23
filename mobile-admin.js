@@ -9,6 +9,7 @@
   const TOKEN_KEY = "pinshang_mobile_admin_token";
   const API_ROOT = `https://api.github.com/repos/${REPO.owner}/${REPO.name}`;
   const MAX_PHOTOS = 6;
+  const MAX_VIDEO_SIZE = 60 * 1024 * 1024;
 
   const $ = (selector) => document.querySelector(selector);
   const views = {
@@ -26,6 +27,7 @@
   let isNewProduct = false;
   let isPublishing = false;
   let pendingImages = [];
+  let pendingVideo = null;
   let installPromptEvent = null;
 
   const listFields = ["sellingPoints", "buyingGuide", "installCheck", "included", "extras"];
@@ -37,6 +39,9 @@
     model: "#modelInput",
     description: "#descriptionInput",
     priceNote: "#priceNoteInput",
+    videoUrl: "#videoUrlInput",
+    videoCover: "#videoCoverInput",
+    videoIntro: "#videoIntroInput",
     sellingPoints: "#sellingPointsInput",
     specs: "#specsInput",
     buyingGuide: "#buyingGuideInput",
@@ -276,6 +281,7 @@
   function showCatalog() {
     pendingImages.forEach((item) => URL.revokeObjectURL(item.preview));
     pendingImages = [];
+    pendingVideo = null;
     currentProduct = null;
     renderProducts();
     setView("catalog", "商品列表");
@@ -291,6 +297,9 @@
       price: "价格待确认",
       priceNote: "价格以到店或微信确认为准",
       image: "",
+      videoUrl: "",
+      videoCover: "",
+      videoIntro: "",
       description: "",
       tags: ["可咨询"],
       aliases: [],
@@ -334,6 +343,10 @@
     const gallery = [...new Set([...(product.gallery || []), ...pendingImages.map((item) => item.path)].filter(Boolean))];
     product.gallery = gallery;
     product.image = gallery[0] || "";
+    if (pendingVideo) {
+      product.videoUrl = pendingVideo.path;
+      if (!product.videoCover) product.videoCover = product.image;
+    }
     if (!product.tags?.length) product.tags = ["可咨询"];
     product.aliases = Array.isArray(product.aliases) ? product.aliases : [];
     return product;
@@ -343,6 +356,7 @@
     currentProduct = normalizeProduct(product);
     isNewProduct = isNew;
     pendingImages = [];
+    pendingVideo = null;
     fillEditor(currentProduct);
     setView("editor", isNew ? "新增商品" : "编辑商品");
   }
@@ -420,6 +434,37 @@
     $("#photoInput").value = "";
   }
 
+  async function addVideo(file) {
+    if (!file) return;
+    const ext = `.${String(file.name).split(".").pop()}`.toLowerCase();
+    if (![".mp4", ".webm", ".ogg"].includes(ext)) {
+      setMessage($("#publishMessage"), "视频只支持 mp4、webm、ogg。", "error");
+      return;
+    }
+    if (file.size > MAX_VIDEO_SIZE) {
+      setMessage($("#publishMessage"), "视频太大，建议压缩到 60MB 以内。", "error");
+      return;
+    }
+    const stem = slugify($("#modelInput").value || $("#nameInput").value || "product");
+    pendingVideo = {
+      path: `assets/products/${stem}-${Date.now()}${ext}`,
+      base64: arrayBufferToBase64(await file.arrayBuffer())
+    };
+    $("#videoUrlInput").value = pendingVideo.path;
+    if (!$("#videoCoverInput").value.trim()) $("#videoCoverInput").value = currentProduct.image || "";
+    setMessage($("#publishMessage"), `已选择视频：${file.name}，发布后生效。`, "success");
+    $("#videoInput").value = "";
+  }
+
+  function clearVideo() {
+    pendingVideo = null;
+    $("#videoUrlInput").value = "";
+    $("#videoCoverInput").value = "";
+    $("#videoIntroInput").value = "";
+    $("#videoInput").value = "";
+    setMessage($("#publishMessage"), "视频已清空，发布后客户网站不再显示这个商品的视频。", "success");
+  }
+
   function removePhoto(path) {
     const pending = pendingImages.find((item) => item.path === path);
     if (pending) URL.revokeObjectURL(pending.preview);
@@ -449,6 +494,10 @@
     for (const image of pendingImages) {
       const blob = await createBlob(image.base64, "base64");
       treeEntries.push({ path: image.path, mode: "100644", type: "blob", sha: blob.sha });
+    }
+    if (pendingVideo) {
+      const blob = await createBlob(pendingVideo.base64, "base64");
+      treeEntries.push({ path: pendingVideo.path, mode: "100644", type: "blob", sha: blob.sha });
     }
     const dataBlob = await createBlob(serializeDataFile(data));
     treeEntries.push({ path: "data.js", mode: "100644", type: "blob", sha: dataBlob.sha });
@@ -490,6 +539,7 @@
       await publishData(`${isNewProduct ? "add" : "update"} product ${product.name}`);
       pendingImages.forEach((item) => URL.revokeObjectURL(item.preview));
       pendingImages = [];
+      pendingVideo = null;
       currentProduct = JSON.parse(JSON.stringify(product));
       isNewProduct = false;
       fillCategoryOptions();
@@ -590,6 +640,12 @@
       setMessage($("#publishMessage"), friendlyError(error), "error");
     });
   });
+  $("#videoInput").addEventListener("change", (event) => {
+    addVideo(event.target.files[0]).catch((error) => {
+      setMessage($("#publishMessage"), friendlyError(error), "error");
+    });
+  });
+  $("#clearVideoButton").addEventListener("click", clearVideo);
   $("#photoList").addEventListener("click", (event) => {
     const button = event.target.closest("[data-photo-path]");
     if (button) removePhoto(button.dataset.photoPath);

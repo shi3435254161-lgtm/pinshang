@@ -323,6 +323,9 @@ window.SHOP_DATA = {
       "price": "3599",
       "priceNote": "价格以到店或微信确认为准",
       "image": "assets/products/cxw-300-yz23m-20260720101333.jpg",
+      "videoUrl": "assets/products/cxw-300-yz23m-20260723014917.mp4",
+      "videoCover": "assets/products/cxw-300-yz23m-20260720101333.jpg",
+      "videoIntro": "商品介绍视频，点击封面后播放。",
       "description": "美的CXW-300-YZ23M是一款顶侧双吸式油烟机，主打大吸力、智能操控和高温蒸汽洗",
       "tags": [
         "可咨询"

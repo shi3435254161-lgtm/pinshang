@@ -78,7 +78,8 @@
       ".mobile-actions a",
       ".mobile-actions button",
       ".showcase-card",
-      ".product-gallery__thumbs button"
+      ".product-gallery__thumbs button",
+      ".product-video__load"
     ].join(","));
 
     if (!target || target.disabled) return;
@@ -117,6 +118,7 @@
       ...(product.sellingPoints || []),
       ...(product.buyingGuide || []),
       ...(product.installCheck || []),
+      product.videoIntro,
       ...(product.specs || []).flat(),
       ...(product.faqs || []).flat()
     ].join(" ").toLowerCase();
@@ -281,6 +283,34 @@
     `;
   }
 
+  function productVideo(product) {
+    const videoUrl = String(product.videoUrl || "").trim();
+    if (!videoUrl) return "";
+    const cover = String(product.videoCover || product.image || "").trim();
+    const intro = String(product.videoIntro || "").trim();
+    return `
+      <section class="product-video" aria-label="商品视频">
+        <button class="product-video__load" type="button" data-load-video="${escapeHtml(videoUrl)}" data-video-title="${escapeHtml(product.name)}视频">
+          ${cover ? `<img src="${escapeHtml(cover)}" alt="${escapeHtml(product.name)}视频封面" loading="lazy">` : ""}
+          <span class="product-video__play" aria-hidden="true">▶</span>
+        </button>
+        <div class="product-video__copy">
+          <h3>商品视频</h3>
+          ${intro ? `<p>${escapeHtml(intro)}</p>` : `<p>点击封面后再加载视频，打开详情时不会自动消耗流量。</p>`}
+        </div>
+      </section>
+    `;
+  }
+
+  function videoEmbedMarkup(url, title) {
+    const safeUrl = escapeHtml(url);
+    const safeTitle = escapeHtml(title || "商品视频");
+    if (/\.(mp4|webm|ogg)(\?|#|$)/i.test(url)) {
+      return `<video class="product-video__player" src="${safeUrl}" controls autoplay playsinline preload="metadata"></video>`;
+    }
+    return `<iframe class="product-video__player" src="${safeUrl}" title="${safeTitle}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+  }
+
   function productGallery(product) {
     const images = [...new Set([...(product.gallery || []), product.image].filter(Boolean))];
     const firstImage = images[0] || product.image;
@@ -368,6 +398,7 @@
         </div>
         <div class="product-detail__commerce">
           ${commerceSection("商品卖点", product.sellingPoints, "commerce-section--points")}
+          ${productVideo(product)}
           ${specTable(product.specs)}
           ${commerceSection("选购说明", product.buyingGuide)}
           ${commerceSection("安装前请确认", product.installCheck, "commerce-section--check")}
@@ -504,6 +535,7 @@
     const quoteButton = event.target.closest("[data-quote]");
     const galleryButton = event.target.closest("[data-gallery-image]");
     const shareButton = event.target.closest("[data-share-product]");
+    const loadVideoButton = event.target.closest("[data-load-video]");
     const copyWechatButton = event.target.closest("[data-copy-wechat]");
     const copyOpenWechatButton = event.target.closest("[data-copy-open-wechat]");
     const focusInquiryButton = event.target.closest("[data-focus-inquiry]");
@@ -527,6 +559,10 @@
       openContact(product);
     } else if (shareButton) {
       shareProduct(shareButton.dataset.shareProduct);
+    } else if (loadVideoButton) {
+      const videoUrl = loadVideoButton.dataset.loadVideo;
+      const videoTitle = loadVideoButton.dataset.videoTitle;
+      loadVideoButton.outerHTML = videoEmbedMarkup(videoUrl, videoTitle);
     } else if (copyOpenWechatButton) {
       copyInquiryAndOpenWechat();
     } else if (focusInquiryButton) {
