@@ -384,6 +384,9 @@ window.SHOP_DATA = {
       "price": "价格待确认2700",
       "priceNote": "价格以到店或微信确认为准",
       "image": "assets/products/product-1784763966960-1.jpg",
+      "videoUrl": "",
+      "videoCover": "",
+      "videoIntro": "",
       "description": "这款太阳能，适合4～5人使用，不用烧电的热水器，寿命长达10年",
       "tags": [
         "可咨询"
